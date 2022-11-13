@@ -1,0 +1,144 @@
+:root {
+    --bs-primary: #214479;
+    --bs-secondary-rgb: 197,197,197;
+}
+
+/* BOOTSTRAP OVERRIDES */
+
+.btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.btn-blurple {
+    background-color: #7289da;
+    border-color: #7289da;
+}
+
+/* ERROR FIXES */
+
+.error.err-fix {
+    max-width: 500px;
+}
+
+/* MAIN CSS */
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #242f3f;
+    color: white;
+}
+
+a.alt {
+    max-width: 410px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
+    text-transform: uppercase;
+    background: #214479;
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 40px;
+    color: #fff;
+    font-weight: 700;
+    -webkit-box-shadow: 0 4px 15px -5px #214479;
+    box-shadow: 0 4px 15px -5px #214479
+}
+
+.fancy-header {
+    font-family: Montserrat, sans-serif;
+    font-size: calc(2em + 2.5vw);
+    margin: 0;
+    font-weight: 900;
+    background: url(../static/gradient.jpg) no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: cover;
+    background-position: center
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.loader-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #242f3f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    border: 4px solid #Fff;
+    animation: loader 2s infinite ease;
+}
+
+.loader-inner {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
+    animation: loader-inner 2s infinite ease-in;
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(180deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    75% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loader-inner {
+    0% {
+        height: 0%;
+    }
+
+    25% {
+        height: 0%;
+    }
+
+    50% {
+        height: 100%;
+    }
+
+    75% {
+        height: 100%;
+    }
+
+    100% {
+        height: 0%;
+    }
+}
