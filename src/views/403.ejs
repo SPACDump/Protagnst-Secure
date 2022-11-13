@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: '403'}) %>
+    <link rel="stylesheet" href="./public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-inner">
+            <div class="error-code">
+                <h1>403</h1>
+            </div>
+            <h2>403 - Forbidden</h2>
+            <p>You do not retain the correct authorization to view this resource.</p>
+            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';">Go back</button>
+            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/login'">Login to your account</button>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Login' }) %>
+        <link rel="stylesheet" href="./public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header">Error</h1>
+            <p class="text-secondary mb-5">There was an error.<p>
+
+                <% if (errorReason) { %>
+                    <p class="text-secondary fs-5"><%= errorReason %></p>
+                  <% } %>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';">Go back</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/';">Home</button>
+                &copy; Jack Perry 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>

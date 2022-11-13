@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Home' }) %>
+    <link rel="stylesheet" href="./public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix"> 
+            <h1 class="fancy-header">My Panel</h1>
+            <!-- Note that session.username is possible, just set in api.js:7 postAuthCheck function -->
+            <p class="text-secondary mb-5">Welcome back, <%- session.email %></p>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/view';">View my bookings</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/create';">Create a new booking</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/staff';">Staff Panel</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/logout';">Logout</button>
+            &copy; Jack Perry 2022</p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>

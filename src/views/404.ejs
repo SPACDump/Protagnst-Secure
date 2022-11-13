@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: '404'}) %>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="preload" href="/public/css/main.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="./public/css/main.css"></noscript>
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-inner">
+            <div class="error-code">
+                <h1>404</h1>
+            </div>
+            <h2>404 - Gone fishing!</h2>
+            <p>The resource you have requested is either invalid or not located at this path. Please ensure all software is up to date and contact your system administrator if issues continue to arise.</p>
+            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';">Go back</button>
+        </div>
+    </div>
+
+    <div class="loader-wrapper">
+        <span class="loader"><span class="loader-inner"></span></span>
+    </div>
+    
+    <script>
+        $(window).on("load",function(){
+            $(".loader-wrapper").fadeOut("slow");
+        });
+    </script>
+</body>
+
+</html>

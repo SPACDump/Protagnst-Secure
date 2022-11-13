@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Welcome' }) %>
+    <link rel="stylesheet" href="./public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix"> 
+            <h1 class="fancy-header">Protagnst</h1>
+            <p class="text-secondary mb-5">Please sign in with Discord to continue.<p>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-blurple text-white btn-block w-100 mb-3" onclick="window.location.href = '/api/passport';">Login with Discord</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/support';">Contact Support</button>
+            &copy; Jack Perry 2022</p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
