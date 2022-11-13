@@ -76,7 +76,7 @@ class App {
 
         this.app.get('/', async function (req, res) {
             let session = req.session;
-            if (session.email) {
+            if (session.discordId) {
                 res.render('home.ejs', {
                     session: req.session
                 });
