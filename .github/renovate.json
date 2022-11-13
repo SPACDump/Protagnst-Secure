@@ -3,7 +3,7 @@
   "extends": [
     "config:base"
   ],
-  "ignoreDeps": ["chalk", "node-fetch", "pretty-ms"],
+  "ignoreDeps": ["chalk", "node-fetch", "pretty-ms", "dateformat"],
   "packageRules": [
     {
       "matchPackagePatterns": ["*"],
