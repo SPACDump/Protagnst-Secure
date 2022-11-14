@@ -87,28 +87,26 @@ class App {
 
         this.app.get('/support', async function (req, res) {
             res.render('support.ejs');
-        })
+        });
 
-        // this.app.get('/logout', async function (req, res) {
-        //     req.session.destroy();
-        //     res.redirect('/');
-        // });
-
-        // this.app.get('/error', async function (req, res) {
-        //     let errorCode = req.query.e;
-        //     let reason;
-        //     switch (errorCode) {
-        //         case "dataNotVerifiable": { reason = "This email cannot be verified"; break; };
-        //         case "invalidEmail": { reason = "That is not a valid email"; break; };
-        //         case "emailExists": { reason = "This email is already in use."; break; };
-        //         default: { reason = "An unknown error ocurred"; break; };
-        //     } 
-        //     res.render('dataError.ejs', { errorReason: reason })
-        // });
+        this.app.get('/error', async function (req, res) {
+            let errorCode = req.query.e;
+            let reason;
+            switch (errorCode) {
+                case "dataNotVerifiable": { reason = "This email cannot be verified"; break; };
+                case "invalidEmail": { reason = "That is not a valid email"; break; };
+                case "emailExists": { reason = "This email is already in use."; break; };
+                default: { reason = "An unknown error ocurred"; break; };
+            } 
+            res.render('dataError.ejs', { errorReason: reason })
+        });
 
         this.app.get('/403', async function (req, res) {
-            //give 403 status and render 403.ejs
             res.status(403).render('403.ejs');
+        });
+
+        this.app.get('/jswarning', async function (req, res) {
+            res.render('jswarning.ejs');
         });
 
         this.app.use((req, res) => {
