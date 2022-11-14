@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Select a Form' }) %>
+        <link rel="stylesheet" href="./public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header">New Application</h1>
+            <p class="text-secondary mb-5">Select a form to fill out.</p>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <div id="hereTheFormsGo"></div>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    This feature is not currently available.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    const { getAvailableForms } = require('../../utilities/getAvailableForms.js');
+    let availableForms = getAvailableForms();
+
+    // on load, add buttons based on the objects in the array
+    window.onload = function() {
+        for (let i = 0; i < availableForms.length; i++) {
+            let button = document.createElement("button");
+            button.innerHTML = availableForms[i].name;
+            button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
+            button.setAttribute("onclick", "window.location.href = '/new/" + availableForms[i].id + "';");
+            document.getElementById("hereTheFormsGo").appendChild(button);
+            // console.log(availableForms.length);
+            // if (availableForms.length == 0) {
+            //     let p = document.createElement("p");
+            //     p.innerHTML = "No forms available.";
+            //     document.getElementById("hereTheFormsGo").appendChild(p);
+            // }
+        }
+    }
+
+    var toastTrigger = document.getElementById('liveToastBtn')
+    var toastLiveExample = document.getElementById('liveToast')
+    if (toastTrigger) {
+        toastTrigger.addEventListener('click', function () {
+            var toast = new bootstrap.Toast(toastLiveExample)
+
+            toast.show()
+        })
+    }
+</script>
+
+<!-- 
+    <ul>
+        <% let users = ["user1", "user2", "user3"]; %>
+        <% users.forEach(function(user){ %>
+            <p><%- user %></p>
+        <% }); %>
+    </ul>
+ -->
