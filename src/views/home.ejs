@@ -3,26 +3,39 @@
 
 <head>
     <%- include('components/header', { title: 'Home' }) %>
-    <link rel="stylesheet" href="./public/css/main.css">
+        <link rel="stylesheet" href="./public/css/main.css">
 </head>
 
 <body>
     <div id="error">
-        <div class="error err-fix"> 
+        <div class="error err-fix">
             <h1 class="fancy-header">My Panel</h1>
             <p class="text-secondary mb-5">Welcome back, <%- session.userTag %>!</p>
 
-            <ul>
-                <% let users = ["user1", "user2", "user3"]; %>
-                <% users.forEach(function(user){ %>
-                  <p><%- user %></p>
-                <% }); %>
-              </ul>
-
             <p class="mt-5 mb-3 text-secondary text-center fs-6">
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/soon';"><i>Buttons coming soon...</i></button>
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/api/logout';">Logout</button>
-            &copy; Protagnst Media LLC / Blaze Productions LLC 2022</p>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/new';"><i class="fa-solid fa-pen-nib"></i> Fill out a
+                    form</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" id="liveToastBtn">
+                    <i class="fa-solid fa-eye"></i> View my submissions</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/api/logout';"><i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Logout</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    This feature is not currently available.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
         </div>
     </div>
 
@@ -30,3 +43,24 @@
 </body>
 
 </html>
+
+<script>
+    var toastTrigger = document.getElementById('liveToastBtn')
+    var toastLiveExample = document.getElementById('liveToast')
+    if (toastTrigger) {
+        toastTrigger.addEventListener('click', function () {
+            var toast = new bootstrap.Toast(toastLiveExample)
+
+            toast.show()
+        })
+    }
+</script>
+
+<!-- 
+    <ul>
+        <% let users = ["user1", "user2", "user3"]; %>
+        <% users.forEach(function(user){ %>
+            <p><%- user %></p>
+        <% }); %>
+    </ul>
+ -->
