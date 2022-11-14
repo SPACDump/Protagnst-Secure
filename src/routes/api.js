@@ -42,7 +42,7 @@ class API extends Router {
         });
 
         this.router.get('/passport/callback', async (req, res) => {
-            if (!req.query.code) throw new Error('NoCodeProvided');
+            if (!req.query.code) return res.redirect('/auth');
             const code = req.query.code;
 
             let urlData = {
