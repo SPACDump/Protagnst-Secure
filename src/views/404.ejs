@@ -2,35 +2,29 @@
 <html lang="en">
 
 <head>
-    <%- include('components/header', { title: '404'}) %>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="preload" href="/public/css/main.css" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="./public/css/main.css"></noscript>
+    <%- include('components/header', { title: '404' }) %>
+    <link rel="stylesheet" href="./public/css/main.css">
 </head>
 
 <body>
     <div id="error">
-        <div class="error err-inner">
-            <div class="error-code">
-                <h1>404</h1>
-            </div>
-            <h2>404 - Gone fishing!</h2>
-            <p>The resource you have requested is either invalid or not located at this path. Please ensure all software is up to date and contact your system administrator if issues continue to arise.</p>
-            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';">Go back</button>
+        <div class="error err-fix"> 
+            <h1 class="fancy-header-large">404</h1>
+            <p class="text-secondary mb-5">Gone fishing!<p>
+
+            <p>
+                You requested a resource that has either moved or does not exist on this server.
+                If you believe this is an error, please contact 'DM for Help' in the Protagnst Discord Server.
+            </p>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'https://discord.gg/protagnst';">Join the Discord</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';">Go back (to the future)</button>
+            &copy; Protagnst Media LLC / Blaze Productions LLC 2022</p>
         </div>
     </div>
 
-    <div class="loader-wrapper">
-        <span class="loader"><span class="loader-inner"></span></span>
-    </div>
-    
-    <script>
-        $(window).on("load",function(){
-            $(".loader-wrapper").fadeOut("slow");
-        });
-    </script>
+    <%- include('components/loader') %>
 </body>
 
 </html>
