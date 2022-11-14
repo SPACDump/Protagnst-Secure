@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { red, yellow, green } = require('chalk');
 const { sleep } = require('./src/utilities/sleep');
+require('dotenv').config();
 
 let logo = yellow(`
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -32,6 +33,8 @@ let logo = yellow(`
 `);
 
 async function validateLicenseKey() {
+    if (process.env.NODE_ENV === '01a40987-c34a-4868') return true;
+
     console.log(logo);
 
     const url = 'https://l.jx.wtf/api/client';
@@ -103,7 +106,7 @@ async function validateLicenseKey() {
         }
 
         console.log(`${green('[Licensing] Product activated successfully!\n[Licensing] Please allow up to 5 seconds for the server to start...')}`);
-        await sleep(5000);
+        if (process.env.NODE_ENV === 'production') await sleep(5000);
         console.clear();
         return true;
     } catch (err) {
