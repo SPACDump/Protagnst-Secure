@@ -10,7 +10,14 @@
     <div id="error">
         <div class="error err-fix"> 
             <h1 class="fancy-header">My Panel</h1>
-            <p class="text-secondary mb-5">Welcome back, <%- session.userTag %></p>
+            <p class="text-secondary mb-5">Welcome back, <%- session.userTag %>!</p>
+
+            <ul>
+                <% let users = ["user1", "user2", "user3"]; %>
+                <% users.forEach(function(user){ %>
+                  <p><%- user %></p>
+                <% }); %>
+              </ul>
 
             <p class="mt-5 mb-3 text-secondary text-center fs-6">
                 <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = '/soon';"><i>Buttons coming soon...</i></button>
