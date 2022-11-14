@@ -70,7 +70,7 @@ class App {
         }
 
         this.app.get('/auth', async function (req, res) {
-            if (req.session.email) res.redirect('/');
+            if (req.session.discordId) res.redirect('/');
             else res.render('auth.ejs');
         });
 
@@ -107,6 +107,28 @@ class App {
 
         this.app.get('/jswarning', async function (req, res) {
             res.render('jswarning.ejs');
+        });
+
+        this.app.get('/new', async function (req, res) {
+            let session = req.session;
+            if (session.discordId) {
+                res.render('selectNewForm.ejs', {
+                    session: req.session
+                });
+            } else {
+                res.redirect('/auth');
+            }
+        });
+
+        this.app.get('/my', async function (req, res) {
+            let session = req.session;
+            if (session.discordId) {
+                res.render('viewSubmissions.ejs', {
+                    session: req.session
+                });
+            } else {
+                res.redirect('/auth');
+            }
         });
 
         this.app.use((req, res) => {
