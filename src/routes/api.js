@@ -73,6 +73,9 @@ class API extends Router {
             });
             const userJson = await userResponse.json();
 
+            req.session.types_DiscordPassport = json;
+            req.session.types_DiscordUser = userJson;
+
             req.session.discordId = userJson.id;
             req.session.userTag = userJson.username + '#' + userJson.discriminator;
 
