@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const redirect = encodeURIComponent('http://localhost:3000/api/passport/callback');
 
 const fetch = require('node-fetch-commonjs');
-const btoa = require('btoa');
+const { getAvailableForms } = require('../utilities/getAvailableForms');
 
 function _encode(obj) {
     let string = "";
@@ -80,6 +80,11 @@ class API extends Router {
             req.session.userTag = userJson.username + '#' + userJson.discriminator;
 
             res.set(200).redirect('/');
+        });
+
+        this.router.get('/utils/js/getAvailableForms', async (req, res) => {
+            let forms = await getAvailableForms();
+            return res.json(forms);
         });
 
         this.router.get('/logout', (req, res) => {
