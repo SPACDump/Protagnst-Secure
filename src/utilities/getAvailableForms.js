@@ -1,19 +1,11 @@
-function getAvailableForms(permissionsMap = {}) {
-    let forms = [];
+const { executeMysqlQuery } = require("./mysqlHelper");
 
-    let eventOneApplication = {
-        name: "Event One Application",
-        id: "eventOneApplication",
-        description: "Apply to be a part of the first event!",
-        permissionNeeded: "user"
-    }
+async function getAvailableForms() {
+    // @TODO Pass in user permissions to filter out forms they can't access
+    let formsLength = await executeMysqlQuery(`SELECT * FROM forms`);
+    return formsLength;
 
-    // check if user has permission from PermissionsMap if so, push
-    if (permissionsMap.user) {
-        forms.push(eventOneApplication);
-    }
-
-    return forms;
+    // permissions: user, staff, site_admin
 }
 
 module.exports = { getAvailableForms };
