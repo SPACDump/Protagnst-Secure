@@ -131,6 +131,18 @@ class App {
             }
         });
 
+        this.app.get('/fill/:formId', (req, res) => {
+            let session = req.session;
+            if (session.discordId) {
+                res.render('fill.ejs', {
+                    formId: req.params.formId,
+                    session: req.session
+                });
+            } else {
+                res.redirect('/auth');
+            }
+        });
+
         this.app.use((req, res) => {
             res.render('404.ejs');
         });
