@@ -23,7 +23,8 @@
             aria-atomic="true" id="liveToast">
             <div class="d-flex">
                 <div class="toast-body">
-                    This feature is not currently available.
+                    There was an error processing your request.
+                    Please try again later.
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                     aria-label="Close"></button>
@@ -36,24 +37,20 @@
 
 </html>
 
-<script>
-    const { getAvailableForms } = require('../../utilities/getAvailableForms.js');
-    let availableForms = getAvailableForms();
-
+<!-- <script>
     // on load, add buttons based on the objects in the array
-    window.onload = function() {
+    window.onload = function () {
+        const { getAvailableForms } = require('../../utilities/getAvailableForms.js');
+        let availableForms = getAvailableForms();
+
+        console.log(availableForms);
+
         for (let i = 0; i < availableForms.length; i++) {
             let button = document.createElement("button");
             button.innerHTML = availableForms[i].name;
             button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
             button.setAttribute("onclick", "window.location.href = '/new/" + availableForms[i].id + "';");
             document.getElementById("hereTheFormsGo").appendChild(button);
-            // console.log(availableForms.length);
-            // if (availableForms.length == 0) {
-            //     let p = document.createElement("p");
-            //     p.innerHTML = "No forms available.";
-            //     document.getElementById("hereTheFormsGo").appendChild(p);
-            // }
         }
     }
 
@@ -65,6 +62,31 @@
 
             toast.show()
         })
+    }
+</script> -->
+
+<script>
+    // on load
+    window.onload = function () {
+        fetch(`http://localhost:3000/api/utils/js/getAvailableForms`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                let button = document.createElement("button");
+                button.innerHTML = data[i].name;
+                button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
+                button.setAttribute("onclick", "window.location.href = '/fill/" + data[i].id + "';");
+                document.getElementById("hereTheFormsGo").appendChild(button);
+            }
+        }).catch(err => {
+            console.log(err);
+            var toast = new bootstrap.Toast(document.getElementById('liveToast'))
+            toast.show()
+        });
     }
 </script>
 
