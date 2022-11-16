@@ -106,6 +106,7 @@ class App {
         });
 
         this.app.get('/jswarning', async function (req, res) {
+            if (req.session.discordId) return res.redirect('/');
             res.render('jswarning.ejs');
         });
 
