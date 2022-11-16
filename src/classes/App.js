@@ -89,8 +89,8 @@ class App {
             res.render('support.ejs');
         });
 
-        this.app.get('/error', async function (req, res) {
-            let errorCode = req.query.e;
+        this.app.get('/error/:errorCode', async function (req, res) {
+            let errorCode = req.params.errorCode;
             let reason;
             switch (errorCode) {
                 case "dataNotVerifiable": { reason = "This email cannot be verified"; break; };
