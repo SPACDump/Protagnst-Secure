@@ -92,6 +92,46 @@ class API extends Router {
             res.redirect('/');
         });
 
+        // getQuestions API route
+        this.router.get('/getQuestions/:formId', async (req, res) => {
+            // check if user is logged in
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            // lock so only the server can use this endpoint
+            // @todo if needed, change this to req.query.authCode and then change that to an encoded version of the form name or id, whatever's easier.
+            let isFromServer = req.query.f9d14b6cb97d;
+            if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            try {
+                let questions = await executeMysqlQuery('SELECT * FROM questions WHERE id = ?', [req.params.formId]);
+                res.json(questions);
+            } catch (e) {
+                console.log(e)
+            }
+        });
+
+        this.router.post('/submitForm/:formId', async (req, res) => {
+            const formId = req.params.formId;
+            let data = req.body;
+            let discordId = req.session.discordId;
+
+            if (!discordId) {
+                return res.json({
+                    "error": "You are not signed in."
+                });
+            };
+
+            if (!data) {
+                return res.json({
+                    "error": "There was no data provided."
+                });
+            }
+
+            await executeMysqlQuery(`INSERT INTO submissions (discord_id, form_id, submitted_at, form_data, outcome) VALUES (?, ?, ?, ?, ?)`, [discordId, formId, Math.floor(Date.now() / 1000), JSON.stringify(data), 'pending']);
+
+            res.json({ success: true, message: 'Successfully applied!' });
+        });
+
         this.router.use((req, res) => {
             res.status(404).json({
                 "error": "This API endpoint is invalid or has moved."
