@@ -1,6 +1,6 @@
 {
     "name": "protagnst-secure",
-    "version": "0.1-a1",
+    "version": "1.0.0",
     "description": "Protagnst Secure Forms App",
     "main": "index.js",
     "scripts": {
