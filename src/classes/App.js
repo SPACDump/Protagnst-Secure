@@ -11,6 +11,7 @@ const Logger = require('../utilities/consoleLog');
 const sessions = require('express-session');
 require('dotenv').config();
 const { makeConnection, executeMysqlQuery } = require('../utilities/mysqlHelper');
+const { getFormById } = require('../utilities/getAvailableForms');
 
 // start mysql connection
 makeConnection();
@@ -130,16 +131,33 @@ class App {
             }
         });
 
-        this.app.get('/fill/:formId', (req, res) => {
+        this.app.get('/fill/:formId', async (req, res) => {
+            // check if user has already applied for this form
+            let formId = req.params.formId;
             let session = req.session;
-            if (session.discordId) {
-                res.render('fill.ejs', {
-                    formId: req.params.formId,
-                    session: req.session
-                });
-            } else {
-                res.redirect('/auth');
-            }
+            let discordId = session.discordId;
+
+            if (!discordId) return res.redirect('/auth');
+
+            // check permissions
+            // get form from mysql
+            let form = await getFormById(req.params.formId);
+            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+            console.log(user);
+            console.log(form);
+
+            let userPermission = user[0].permission_level;
+
+            // if userperms are lower than formperms
+            if (userPermission < form.permissions_needed) {
+                return res.redirect('/403');
+            };
+
+            res.render('fill.ejs', {
+                formId: form.id,
+                formName: form.form_name,
+                session: req.session
+            });
         });
 
         this.app.use((req, res) => {
