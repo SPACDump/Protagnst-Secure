@@ -24,36 +24,51 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `id` int NOT NULL AUTO_INCREMENT,
   `form_name` varchar(255) NOT NULL,
   `form_description` varchar(255) NOT NULL,
-  `permissions_needed` varchar(10) NOT NULL,
+  `permissions_needed` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table protagnstsecure.forms: ~0 rows (approximately)
+-- Data exporting was unselected.
+
+-- Dumping structure for table protagnstsecure.questions
+CREATE TABLE IF NOT EXISTS `questions` (
+  `question_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL,
+  `question` varchar(250) NOT NULL,
+  `question_short` varchar(20) NOT NULL,
+  `question_type` varchar(20) NOT NULL,
+  `question_data` text,
+  PRIMARY KEY (`question_id`) USING BTREE,
+  KEY `id` (`id`),
+  CONSTRAINT `id` FOREIGN KEY (`id`) REFERENCES `forms` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Questions for protagnstsecure.forms\r\n\r\nquestion\r\nqueston_short\r\nquetoon_type';
+
+-- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.submissions
 CREATE TABLE IF NOT EXISTS `submissions` (
   `discord_id` varchar(255) NOT NULL,
   `submission_id` int NOT NULL AUTO_INCREMENT,
   `form_id` int NOT NULL,
-  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `outcome` tinyint(1) NOT NULL DEFAULT '0',
+  `submitted_at` int NOT NULL,
+  `form_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `outcome` varchar(10) NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`submission_id`,`discord_id`) USING BTREE,
   KEY `form_id` (`form_id`),
-  KEY `discord_id` (`discord_id`),
-  CONSTRAINT `discord_id` FOREIGN KEY (`discord_id`) REFERENCES `users` (`discord_id`),
   CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table protagnstsecure.submissions: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
   `discord_id` varchar(30) NOT NULL,
   `refresh_token` varchar(30) NOT NULL,
+  `permission_level` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`discord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table protagnstsecure.users: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
