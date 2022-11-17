@@ -5,6 +5,8 @@
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
 
+-- MUST USE SQL VER 8.0.30 TO HAVE UTF8MB4!!!!
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
