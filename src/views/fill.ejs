@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <%- include('components/header', { title: 'Submit Form' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">
+                <%- formName %>
+            </h1>
+            <p class="text-secondary mb-5">Please submit the form below to apply.</p>
+
+            <form></form>
+
+            <div class="btn-toolbar mt-3" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-danger btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                <button type="button" id="btnCancel" class="btn btn-primary btn-md"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Support</button>
+            </div>
+
+            <p class="mt-2 mb-3 text-secondary text-center fs-6">
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Welcome home.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+<script>
+    // function to render questions based on data from the database
+    function renderQuestions(formId) {
+        $.ajax({
+            url: `/api/getQuestions/${formId}`,
+            type: 'GET',
+            data: { "f9d14b6cb97d": true },
+            success: function (data) {
+                // loop through the questions
+                for (var i = 0; i < data.length; i++) {
+                    // create a new div for the question
+                    var newDiv = document.createElement('div');
+                    newDiv.className = 'form-label-group';
+
+                    // create a new label for the question
+                    var newLabel = document.createElement('p');
+                    newLabel.className = 'text-start mb-1 text-secondary';
+                    newLabel.innerHTML = data[i].question + ' <span class="text-danger">*</span>';
+
+                    if (data[i].question_type === "textarea") {
+                        var newInput = document.createElement('textarea');
+                        newInput.className = 'form-control mb-1';
+                        newInput.name = data[i].question_short;
+                        newInput.required = true;
+                        newInput.id = data[i].question_short;
+                    } else if (data[i].question_type === "select") {
+                        var newInput = document.createElement('select');
+                        newInput.className = 'form-select mb-1';
+                        newInput.name = data[i].question_short;
+                        newInput.required = true;
+                        newInput.id = data[i].question_short;
+                        var options = data[i].question_data.split('>>');
+                        for (var j = 0; j < options.length; j++) {
+                            var newOption = document.createElement('option');
+                            newOption.value = options[j];
+                            newOption.innerHTML = options[j];
+                            newInput.appendChild(newOption);
+                        }
+                    } else {
+                        var newInput = document.createElement('input');
+                        newInput.type = data[i].question_type;
+                        newInput.className = 'form-control mb-1';
+                        newInput.name = data[i].question_short;
+                        newInput.required = true;
+                        newInput.id = data[i].question_short;
+                    }
+
+                    // append the label and input to the div
+                    newDiv.appendChild(newLabel);
+                    newDiv.appendChild(newInput);
+
+                    // append the div to the form
+                    document.getElementsByTagName('form')[0].appendChild(newDiv);
+                }
+
+                let submitButton = document.createElement('button');
+                submitButton.type = 'submit';
+                submitButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mt-3';
+                submitButton.innerHTML = '<i class="fa-solid fa-check"></i> Submit';
+                submitButton.id = 'btnSubmit';
+                document.getElementsByTagName('form')[0].appendChild(submitButton);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    // on page load, call the renderQuestions function
+    $(document).ready(function () {
+        // get id from window.location.href
+        const url = window.location.href;
+        const formId = url.substring(url.lastIndexOf('/') + 1);
+        renderQuestions(formId);
+    });
+
+    // function to get form id from last parameter in url, supports more than 1 character
+    function getFormId() {
+        var url = window.location.href;
+        var formId = url.substring(url.lastIndexOf('/') + 1);
+        return formId;
+    }
+
+    $('form').submit(function (e) {
+        e.preventDefault();
+        var form = $(this);
+        var formId = getFormId();
+        var formData = form.serializeArray();
+        var data = {};
+        $(formData).each(function (index, obj) {
+            data[obj.name] = obj.value;
+        });
+
+        // set form submit button to disabled to avoid double submission
+        $('#btnSubmit').prop('disabled', true);
+
+        fetch(`/api/submitForm/${formId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((res) => res.json())
+            .then(async (data) => {
+                if (data.error) {
+                    let errorCode = data.error || "There was an error processing your request.";
+                    showErrorToast('liveToast', error);
+                    return false;
+                } else if (data.success) {
+                    await showSuccessToast('successToast', data.message);
+                    await sleep(3000);
+                    window.location.href = "/";
+                } else {
+                    showErrorToast('liveToast', "There was an error processing your request.");
+                    return false;
+                }
+            });
+    });
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function showErrorToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+
+    function showSuccessToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+</script>
+
+</html>
