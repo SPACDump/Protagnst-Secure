@@ -22,7 +22,7 @@ async function makeConnection() {
             Logger.error('Error connecting to Db');
             return;
         }
-        Logger.info('Connection established');
+        Logger.mysql('Connection established');
     });
 }
 
