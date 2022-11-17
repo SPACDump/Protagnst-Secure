@@ -141,7 +141,7 @@ class App {
 
             // check permissions
             // get form from mysql
-            let form = await getFormById(req.params.formId);
+            let form = await getFormById(formId);
             let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
             console.log(user);
             console.log(form);
