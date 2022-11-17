@@ -15,6 +15,10 @@
     border-color: #7289da;
 }
 
+.btn-toolbar {
+    text-align: center;
+}
+
 /* ERROR FIXES */
 
 .error.err-fix {
