@@ -93,11 +93,9 @@ class App {
             let errorCode = req.params.errorCode;
             let reason;
             switch (errorCode) {
-                case "dataNotVerifiable": { reason = "This email cannot be verified"; break; };
-                case "invalidEmail": { reason = "That is not a valid email"; break; };
-                case "emailExists": { reason = "This email is already in use."; break; };
+                case "firstCode": { reason = "Example, default, first error code"; break; };
                 default: { reason = "An unknown error ocurred"; break; };
-            } 
+            }
             res.render('dataError.ejs', { errorReason: reason })
         });
 
