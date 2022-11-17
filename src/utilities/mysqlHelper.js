@@ -14,7 +14,7 @@ async function makeConnection() {
         host: process.env.MYSQL_HOST || 'localhost',
         user: process.env.MYSQL_USERNAME || 'root',
         password: process.env.MYSQL_PASSWORD || '',
-        database: process.env.MYSQL_DATABASE || 'collegeproject',
+        database: process.env.MYSQL_DATABASE || 'protagnstsecure',
         port: process.env.MYSQL_PORT || 3306
     });
     connection.connect(function (err) {
