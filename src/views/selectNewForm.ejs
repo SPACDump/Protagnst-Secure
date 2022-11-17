@@ -37,36 +37,7 @@
 
 </html>
 
-<!-- <script>
-    // on load, add buttons based on the objects in the array
-    window.onload = function () {
-        const { getAvailableForms } = require('../../utilities/getAvailableForms.js');
-        let availableForms = getAvailableForms();
-
-        console.log(availableForms);
-
-        for (let i = 0; i < availableForms.length; i++) {
-            let button = document.createElement("button");
-            button.innerHTML = availableForms[i].name;
-            button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
-            button.setAttribute("onclick", "window.location.href = '/new/" + availableForms[i].id + "';");
-            document.getElementById("hereTheFormsGo").appendChild(button);
-        }
-    }
-
-    var toastTrigger = document.getElementById('liveToastBtn')
-    var toastLiveExample = document.getElementById('liveToast')
-    if (toastTrigger) {
-        toastTrigger.addEventListener('click', function () {
-            var toast = new bootstrap.Toast(toastLiveExample)
-
-            toast.show()
-        })
-    }
-</script> -->
-
 <script>
-    // on load
     window.onload = function () {
         fetch(`http://localhost:3000/api/utils/js/getAvailableForms`, {
             method: 'GET',
@@ -89,12 +60,3 @@
         });
     }
 </script>
-
-<!-- 
-    <ul>
-        <% let users = ["user1", "user2", "user3"]; %>
-        <% users.forEach(function(user){ %>
-            <p><%- user %></p>
-        <% }); %>
-    </ul>
- -->
