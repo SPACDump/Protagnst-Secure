@@ -26,4 +26,9 @@ async function getAvailableForms(req) {
     // permissions: user, staff, site_admin
 }
 
-module.exports = { getAvailableForms };
+async function getFormById(formId) {
+    let form = await executeMysqlQuery(`SELECT * FROM forms WHERE id = ?`, [formId]);
+    return form[0];
+}
+
+module.exports = { getAvailableForms, getFormById };
