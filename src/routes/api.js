@@ -6,6 +6,7 @@ const redirect = encodeURIComponent('http://localhost:3000/api/passport/callback
 
 const fetch = require('node-fetch-commonjs');
 const { getAvailableForms } = require('../utilities/getAvailableForms');
+const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 
 function _encode(obj) {
     let string = "";
@@ -78,6 +79,17 @@ class API extends Router {
 
             req.session.discordId = userJson.id;
             req.session.userTag = userJson.username + '#' + userJson.discriminator;
+
+            // check if user exists in database
+            let userExists = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [userJson.id]);
+            // if user exists, delete
+            if (userExists.length > 0) {
+                let userOldPermission = userExists[0].permission_level;
+                await executeMysqlQuery(`DELETE FROM users WHERE discord_id = ?`, [userJson.id]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)` , [userJson.id, json.refresh_token, userOldPermission]);
+            } else {
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)` , [userJson.id, json.refresh_token, 1]);
+            }
 
             res.set(200).redirect('/');
         });
