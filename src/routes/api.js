@@ -95,8 +95,10 @@ class API extends Router {
         });
 
         this.router.get('/utils/js/getAvailableForms', async (req, res) => {
-            let forms = await getAvailableForms();
-            return res.json(forms);
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+            let forms = await getAvailableForms(req);
+            if (forms) return res.json(forms);
+            else return res.json({ "message": "There are no forms available for you right now!" });
         });
 
         this.router.get('/logout', (req, res) => {
