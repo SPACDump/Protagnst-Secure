@@ -127,6 +127,30 @@ class API extends Router {
                 return res.json({ "error": "Form not found" });
             }
         });
+
+        this.router.get('/getSubmission/:submissionId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            // @todo: Add "If user is staff (level 99+), allow it"
+            if (isFromServer != 'f1424090948c') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [req.params.submissionId]);
+
+            if (submission[0].discord_id != req.session.discordId) return res.json({ "error": "You are not allowed to view this submission" });
+
+            if (submission.length > 0) {
+                let combinedObj = {
+                    "submission": submission[0],
+                    "answers": submission[0].form_data
+                }
+
+                return res.json(combinedObj);
+            } else {
+                return res.json({ "error": "Submission not found" });
+            };
+
+        });
         this.router.get('/logout', (req, res) => {
             req.session.destroy();
             res.redirect('/');
