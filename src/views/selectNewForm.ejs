@@ -2,7 +2,7 @@
 
 <head>
     <%- include('components/header', { title: 'Select a Form' }) %>
-        <link rel="stylesheet" href="./public/css/main.css">
+        <link rel="stylesheet" href="../public/css/main.css">
 </head>
 
 <body>
@@ -39,12 +39,15 @@
 
 <script>
     window.onload = function () {
-        fetch(`http://localhost:3000/api/utils/js/getAvailableForms`, {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        fetch(`${hostname}/api/getAvailableForms`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.json()).then(data => {
+        }).then(res => res.json()).then(async data => {
             if (data.message) {
                 return document.getElementById('hereTheFormsGo').innerHTML = data.message;
             };
