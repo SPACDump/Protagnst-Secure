@@ -19,8 +19,8 @@ async function makeConnection() {
     });
     connection.connect(function (err) {
         if (err) {
-            Logger.error('Error connecting to Db');
-            return;
+            Logger.error(`App not able to connect to MySQL database. ${err}`);
+            return process.exit(1);
         }
         Logger.mysql('Connection established');
     });
