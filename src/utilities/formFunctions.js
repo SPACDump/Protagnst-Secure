@@ -4,8 +4,8 @@ async function getAvailableForms(req) {
     if (!req.session.discordId) return false;
 
     let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
-
     let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+
     let userPermission = user[0].permission_level;
 
     for (let i = 0; i < formsArray.length; i++) {
@@ -22,8 +22,28 @@ async function getAvailableForms(req) {
 
     if (formsArray.length > 0) return formsArray;
     return false;
+}
 
-    // permissions: user, staff, site_admin
+async function getPreviousSubmissions(req) {
+    if (!req.session.discordId) return false;
+
+    let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE discord_id = ?`, [req.session.discordId]);
+
+    // getAvailbleForms and if any have is_hidden set to 1, remove from this array
+    let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
+    
+    if (formsArray) {
+        formsArray.forEach(form => {
+            if (form.is_hidden) {
+                submissions = submissions.filter(submission => submission.form_id !== form.id);
+            }
+        });
+    } else { 
+        return false;
+    }
+
+    if (submissions.length > 0) return submissions;
+    return false;
 }
 
 async function getFormById(formId) {
@@ -31,4 +51,4 @@ async function getFormById(formId) {
     return form[0];
 }
 
-module.exports = { getAvailableForms, getFormById };
+module.exports = { getAvailableForms, getFormById, getPreviousSubmissions };
