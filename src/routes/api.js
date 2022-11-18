@@ -168,6 +168,22 @@ class API extends Router {
                 return res.json({ "error": "User not found" });
             }
         });
+        
+        this.router.get('/currentResponses/:formId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'fdd04d8ca52b') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ?`, [req.params.formId]);
+
+            if (submissions.length > 0) {
+                return res.json(submissions.length);
+            } else {
+                return res.json({ "error": "No submissions found" });
+            }
+        });
+
         this.router.get('/logout', (req, res) => {
             req.session.destroy();
             res.redirect('/');
