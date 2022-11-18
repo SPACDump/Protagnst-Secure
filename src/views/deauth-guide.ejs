@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Guide' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Guide</h1>
+            <p class="text-secondary mb-5">Deauthorizing this application.
+            <p>
+
+            <p class="text-secondary mb-5">
+                Don't want to use the app anymore? No problem! You can deauthorize this application at any time. To do
+                so, please follow the steps below:
+                <br /><b>This will stop us being able to add you to guilds when you are accepted. When you sign in to
+                    the app again at the <a class="text-decoration-none" href="/">Home Page</a>, you reauthorize us to use your
+                    data outlined in <a class="text-decoration-none" href="/transparency">The Data Transparency Sheet</a>.</b>
+            </p>
+
+            <p class="text-secondary"><b>Step One:</b> Open your Discord User settings.</p>
+            <img class="img-fluid mb-3" src="https://i.imgur.com/7JwXdqP.png" alt="Guide to deauthorize the app">
+
+            <p class="text-secondary"><b>Step Two:</b> Click on the "Authorised Apps" tab.</p>
+            <img class="img-fluid mb-3" src="https://i.imgur.com/5xUAHvE.png" alt="Guide to deauthorize the app">
+
+            <p class="text-secondary"><b>Step Three:</b> Find the app labelled "<u>Protagnst Media LLC</u>".</p>
+            <img class="img-fluid mb-3" src="https://i.imgur.com/CxA0HaS.png" alt="Guide to deauthorize the app">
+
+            <p class="text-secondary"><b>Step Four:</b> Click the "Deauthorise" button and confirm.</p>
+            <img class="img-fluid mb-3" src="https://i.imgur.com/UYC26y0.png" alt="Guide to deauthorize the app">
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go back (to the future)</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/';"><i class="fa-solid fa-house"></i> Home</button>
+
+            <div class="btn-toolbar mt-3 mb-3" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/transparency';"><i class="fa-solid fa-info"></i> Data
+                    Transparency</button>
+            </div>
+            &copy; Protagnst Media LLC / Blaze Productions LLC 2022</p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
