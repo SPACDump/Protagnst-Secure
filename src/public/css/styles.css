@@ -13,10 +13,26 @@
 .btn-blurple {
     background-color: #7289da;
     border-color: #7289da;
+    outline: #7289da;
+    box-shadow: #7289da;
+}
+
+.btn-blurple:active:focus {
+    box-shadow: #7289da;
+    outline: #7289da;
 }
 
 .btn-toolbar {
     text-align: center;
+}
+
+ul {
+    width: 50%;
+    margin: 0 auto;
+}
+
+ul li {
+    list-style-type: none;
 }
 
 /* ERROR FIXES */
