@@ -7,6 +7,7 @@ const redirect = encodeURIComponent(`${process.env.HOSTNAME}/api/passport/callba
 const fetch = require('node-fetch-commonjs');
 const { getAvailableForms, getPreviousSubmissions } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
+const { encrypt } = require('../utilities/aes');
 
 function _encode(obj) {
     let string = "";
@@ -80,15 +81,17 @@ class API extends Router {
             req.session.discordId = userJson.id;
             req.session.userTag = userJson.username + '#' + userJson.discriminator;
 
+            let encryptedRefreshToken = encrypt(json.refresh_token);
+
             // check if user exists in database
             let userExists = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [userJson.id]);
             // if user exists, delete
             if (userExists.length > 0) {
                 let userOldPermission = userExists[0].permission_level;
                 await executeMysqlQuery(`DELETE FROM users WHERE discord_id = ?`, [userJson.id]);
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, json.refresh_token, userOldPermission]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, encryptedRefreshToken, userOldPermission]);
             } else {
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, json.refresh_token, 1]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, encryptedRefreshToken, 1]);
             }
 
             res.set(200).redirect('/');
@@ -168,7 +171,7 @@ class API extends Router {
                 return res.json({ "error": "User not found" });
             }
         });
-        
+
         this.router.get('/currentResponses/:formId', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
