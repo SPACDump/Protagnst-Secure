@@ -161,6 +161,18 @@ class App {
             });
         });
 
+        this.app.get('/transparency', async (req, res) => {
+            res.render('transparency.ejs');
+        });
+
+        this.app.get('/transparency/deauth', async (req, res) => {
+            res.render('deauth-guide.ejs');
+        });
+
+        this.app.get('/credits', async (req, res) => {
+            res.render('credits.ejs');
+        });
+
         this.app.use((req, res) => {
             res.render('404.ejs');
         });
