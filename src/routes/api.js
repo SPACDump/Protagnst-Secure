@@ -247,6 +247,22 @@ class API extends Router {
             }
         });
 
+        this.router.get('/getProfileById/:discordId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'c2f64dea9444') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            const response = await fetch(`https://discord.com/api/v10/users/${req.params.discordId}`, {
+                headers: {
+                    Authorization: `Bot ${process.env.BOT_TOKEN}`
+                }
+            });
+
+            if (!response.ok) return res.json({ "error": "User not found" });
+            return res.json(await response.json());
+        });
+
         this.router.use((req, res) => {
             res.status(404).json({
                 "error": "This API endpoint is invalid or has moved."
