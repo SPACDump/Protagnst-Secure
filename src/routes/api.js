@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const redirect = encodeURIComponent('http://localhost:3000/api/passport/callback');
 
 const fetch = require('node-fetch-commonjs');
-const { getAvailableForms } = require('../utilities/getAvailableForms');
+const { getAvailableForms, getPreviousSubmissions } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 
 function _encode(obj) {
