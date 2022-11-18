@@ -232,6 +232,21 @@ class API extends Router {
             res.json({ success: true, message: 'Successfully applied!' });
         });
 
+        this.router.get('/admin/getOpenApplications', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE outcome = ?`, ['pending']);
+
+            if (submissions.length > 0) {
+                return res.json(submissions);
+            } else {
+                return res.json({ "error": "No submissions found" });
+            }
+        });
+
         this.router.use((req, res) => {
             res.status(404).json({
                 "error": "This API endpoint is invalid or has moved."
