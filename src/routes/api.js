@@ -86,15 +86,15 @@ class API extends Router {
             if (userExists.length > 0) {
                 let userOldPermission = userExists[0].permission_level;
                 await executeMysqlQuery(`DELETE FROM users WHERE discord_id = ?`, [userJson.id]);
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)` , [userJson.id, json.refresh_token, userOldPermission]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, json.refresh_token, userOldPermission]);
             } else {
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)` , [userJson.id, json.refresh_token, 1]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, json.refresh_token, 1]);
             }
 
             res.set(200).redirect('/');
         });
 
-        this.router.get('/utils/js/getAvailableForms', async (req, res) => {
+        this.router.get('/getAvailableForms', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
             let forms = await getAvailableForms(req);
             if (forms) return res.json(forms);
