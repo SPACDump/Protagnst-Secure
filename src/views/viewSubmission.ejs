@@ -8,14 +8,15 @@
 <body>
     <div id="error">
         <div class="error err-fix">
-            <!-- @todo: Change this title to the name of the form, or Your Submission -->
             <h1 class="fancy-header-small">Submission #<%- submissionId %></h1>
-            <p class="text-secondary mb-5">For form: <%- formName %></p>
+            <p class="text-secondary mb-4">For form: <%- formName %></p>
 
             <form></form>
 
-            <p class="mt-5 mb-3 text-secondary text-center fs-6">
-            <div id="hereTheFormsGo" class="mb-5"></div>
+            <p id="staffToolsText"></p>
+            <div id="btnToolbar" class="btn-toolbar" style="justify-content: center; display: flex;"></div>
+            
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
             <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go back (to the future)</button>
             &copy; Protagnst Media LLC / Blaze Productions LLC 2022
             </p>
@@ -56,6 +57,45 @@
         }).then(res => res.json());
 
         await renderQuestions(subData.submission.form_id, subData);
+        await renderStaffFunctions('<%- session.discordId %>', subData);
+    }
+
+    async function renderStaffFunctions(discordId, subData) {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        let data = await fetch(`${hostname}/api/fetchUserPerms/${discordId}?isFromServer=170c455e9a4a`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => {
+            return data;
+        });
+
+        if (data.permission_level > 2) {
+            let btnToolbar = document.getElementById('btnToolbar');
+            let staffToolsText = document.getElementById('staffToolsText');
+
+            staffToolsText.innerHTML = '<b>Staff Tools:</b>';
+
+            let btnAccept = document.createElement('button');
+            btnAccept.type = 'button';
+            btnAccept.id = 'btnAccept';
+            btnAccept.className = 'btn btn-success btn-md me-2';
+            btnAccept.innerHTML = '<i class="fa-solid fa-check"></i> Accept';
+            btnAccept.onclick = () => window.location.href = `/api/admin/accept/${subData.submission.form_id}`;
+
+            let btnDeny = document.createElement('button');
+            btnDeny.type = 'button';
+            btnDeny.id = 'btnDeny';
+            btnDeny.className = 'btn btn-danger btn-md me-2';
+            btnDeny.innerHTML = '<i class="fa-solid fa-times"></i> Deny';
+            btnDeny.onclick = () => window.location.href = `/api/admin/deny/${subData.submission.form_id}`;
+
+            btnToolbar.appendChild(btnAccept);
+            btnToolbar.appendChild(btnDeny);
+        }
     }
 
     function renderQuestions(formId, subData) {
