@@ -6,6 +6,8 @@ The following outlines current database structure
 `form_name` - Custom-set friendly form name
 `form_description` - Description of what the form is for (Only used internally at the moment)
 `permissions_needed` - Permission role that a user needs, not used at the moment but will be used in the future to restrict access to forms
+`is_hidden` - Decide whether the form is hidden from previous submissions and/or being filled out (If you want to disable filling out but not viewing previous submissions, just set `permissions_needed` to something above `50`.)
+`max_responses` - The amount of responses a form can reach before it is marked as "Closed" and the button is disabled. [Default: -1]
 
 ## questions
 `question_id` - The ID of the question, useless collumn, needed for SQL Schema
