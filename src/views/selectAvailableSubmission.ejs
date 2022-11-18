@@ -1,0 +1,88 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Select a Form' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">View Previous Submissions</h1>
+            <p class="text-secondary mb-5">Select a submission to view</p>
+
+            <div id="hereTheFormsGo" class="mb-3"></div>
+
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
+            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go back (to the future)</button>
+            &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                    Please try again later.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    window.onload = function () {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        fetch(`${hostname}/api/getPreviousSubmissions`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(async data => {
+            if (data.message) {
+                return document.getElementById('hereTheFormsGo').innerHTML = data.message;
+            };
+            for (let i = 0; i < data.length; i++) {
+                let button = document.createElement("button");
+                let formName = "";
+
+                await fetch(`${hostname}/api/getFormById/${data[i].form_id}?isFromServer=abc54fc6a01a`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => res.json()).then(data => {
+                    formName = data.form.form_name;
+                });
+
+                button.innerHTML = `${formName} (${upFirst(data[i].outcome)})`;
+
+                if (data[i].outcome === 'pending') button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
+                else if (data[i].outcome === 'accepted') button.setAttribute("class", "btn btn-lg btn-success text-white btn-block w-100 mb-3");
+                else if (data[i].outcome === 'denied') button.setAttribute("class", "btn btn-lg btn-danger text-white btn-block w-100 mb-3");
+
+                button.setAttribute("onclick", "window.location.href = '/view/" + data[i].submission_id + "';");
+                document.getElementById("hereTheFormsGo").appendChild(button);
+            }
+        }).catch(err => {
+            console.log(err);
+            var toast = new bootstrap.Toast(document.getElementById('liveToast'))
+            toast.show()
+        });
+
+        function upFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+</script>
