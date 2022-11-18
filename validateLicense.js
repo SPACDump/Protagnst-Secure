@@ -106,7 +106,7 @@ async function validateLicenseKey() {
         }
 
         console.log(`${green('[Licensing] Product activated successfully!\n[Licensing] Please allow up to 5 seconds for the server to start...')}`);
-        if (process.env.NODE_ENV === 'production') await sleep(5000);
+        if (process.env.NODE_ENV === 'prod') await sleep(5000);
         console.clear();
         return true;
     } catch (err) {
