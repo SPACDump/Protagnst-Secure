@@ -1,0 +1,119 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Select a Form' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">View Open Applications</h1>
+            <p class="text-secondary mb-4">Select a submission to view</p>
+
+            <p id="pTagLoading">Loading...</p>
+
+            <div id="hereTheFormsGo" class="mb-3"></div>
+
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go back (to the future)</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                    Please try again later.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    window.onload = function () {
+        // Get the hostname
+        // Fetch /api/admin/getOpenApplications
+        // If there are no open applications, display a message
+        // If there are open applications, display a button for each one
+        // When a button is clicked, redirect to /view/:formId
+
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        fetch(`${hostname}/api/admin/getOpenApplications?isFromServer=37c14b8a8b98`)
+            .then(res => res.json())
+            .then(async data => {
+                if (data.error) {
+                    let toastTrigger = document.getElementById('liveToastBtn')
+                    let toastLiveExample = document.getElementById('liveToast')
+                    if (toastTrigger) {
+                        toastTrigger.addEventListener('click', function () {
+                            var toast = new bootstrap.Toast(toastLiveExample)
+
+                            toast.show()
+                        })
+                    }
+
+                    let toast = new bootstrap.Toast(toastLiveExample)
+                    toast.show()
+                } else {
+                    if (data.length == 0) {
+                        let noForms = document.createElement('p');
+                        noForms.className = 'text-secondary';
+                        noForms.innerHTML = 'There are no open applications at this time.';
+
+                        document.getElementById('hereTheFormsGo').appendChild(noForms);
+                    } else {
+                        for (let i = 0; i < data.length; i++) {
+                            let formData = await getFormById(data[i].form_id);
+                            let discordProfile = await getProfileById(data[i].discord_id);
+                            let discordName = discordProfile.username + '#' + discordProfile.discriminator;
+
+                            let formButton = document.createElement('button');
+                            formButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mb-2';
+                            formButton.innerHTML = `<i class="fa-solid fa-file-alt"></i> ${discordName ?? `Unknown`} - ${formData.form.form_name}`;
+                            formButton.onclick = () => window.location.href = `/view/${data[i].submission_id}`;
+
+                            document.getElementById('hereTheFormsGo').appendChild(formButton);
+                        }
+                        $('#pTagLoading').text('');
+                    }
+                }
+            }
+            );
+    }
+
+    async function getFormById(formId) {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        let res = await fetch(`${hostname}/api/getFormById/${formId}?&isFromServer=abc54fc6a01a`);
+        let data = await res.json();
+
+        return data;
+    };
+
+    async function getProfileById(id) {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        let res = await fetch(`${hostname}/api/getProfileById/${id}?&isFromServer=c2f64dea9444`);
+        let data = await res.json();
+
+        return data;
+    };
+</script>
