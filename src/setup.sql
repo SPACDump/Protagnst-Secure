@@ -5,7 +5,7 @@
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
 
--- MUST USE SQL VER 8.0.30 TO HAVE UTF8MB4!!!!
+-- Minimum: MySQL v8.0.30
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -27,8 +27,10 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `form_name` varchar(255) NOT NULL,
   `form_description` varchar(255) NOT NULL,
   `permissions_needed` int NOT NULL DEFAULT '1',
+  `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
+  `max_responses` int NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
@@ -43,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   PRIMARY KEY (`question_id`) USING BTREE,
   KEY `id` (`id`),
   CONSTRAINT `id` FOREIGN KEY (`id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Questions for protagnstsecure.forms\r\n\r\nquestion\r\nqueston_short\r\nquetoon_type';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
@@ -58,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   PRIMARY KEY (`submission_id`,`discord_id`) USING BTREE,
   KEY `form_id` (`form_id`),
   CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
