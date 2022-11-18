@@ -101,6 +101,12 @@ class API extends Router {
             else return res.json({ "message": "There are no forms available for you right now!" });
         });
 
+        this.router.get('/getPreviousSubmissions', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+            let submissions = await getPreviousSubmissions(req);
+            if (submissions) return res.json(submissions);
+            else return res.json({ "message": "There are no (available) submissions for you to view!" });
+        });
         this.router.get('/logout', (req, res) => {
             req.session.destroy();
             res.redirect('/');
