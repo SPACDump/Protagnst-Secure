@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Credits' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-large">Credits</h1>
+            <p class="text-secondary mb-5">The masterminds behind the app.
+            <p>
+
+            <p class="text-secondary">
+                <b>App made for:</b> Protagnst Media LLC<br />
+                <b>In collaboration with:</b> Blaze Productions LLC<br />
+            <p>
+
+            <div id="recieved-data" class="mt-2 mb-5">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Developer</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Jack.#2022</th>
+                            <td>Lead Developer</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">GitHub Copilot (Various Sources)</th>
+                            <td>Code Management & Partial Code-completion - <a class="text-decoration-none" href="https://github.com/features/copilot/" target="_blank" rel="noopener noreferrer">Download <i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+                       </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go back (to the future)</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
