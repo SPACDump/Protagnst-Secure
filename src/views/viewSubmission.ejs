@@ -1,0 +1,120 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Select a Form' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <!-- @todo: Change this title to the name of the form, or Your Submission -->
+            <h1 class="fancy-header-small">Submission #<%- submissionId %></h1>
+            <p class="text-secondary mb-5">For form: <%- formName %></p>
+
+            <form></form>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+            <div id="hereTheFormsGo" class="mb-5"></div>
+            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go back (to the future)</button>
+            &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                    Please try again later.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    window.onload = async function () {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        let submissionId = '<%= submissionId %>';
+        
+        let subData = await fetch(`${hostname}/api/getSubmission/${submissionId}?isFromServer=f1424090948c`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
+
+        await renderQuestions(subData.submission.form_id, subData);
+    }
+
+    function renderQuestions(formId, subData) {
+        $.ajax({
+            url: `/api/getQuestions/${formId}`,
+            type: 'GET',
+            data: { "f9d14b6cb97d": true },
+            success: function (data) {
+                // get form_data from subData and parse it into a true json object
+                let formData = JSON.parse(subData.submission.form_data);
+
+                // loop through the questions
+                for (var i = 0; i < data.length; i++) {
+                    // create a new div for the question
+                    var newDiv = document.createElement('div');
+                    newDiv.className = 'form-label-group';
+
+                    // create a new label for the question
+                    var newLabel = document.createElement('p');
+                    newLabel.className = 'text-start mb-1 text-secondary';
+                    newLabel.innerHTML = data[i].question + ' <span class="text-danger">*</span>';
+
+                    if (data[i].question_type === "textarea") {
+                        var newInput = document.createElement('textarea');
+                        newInput.className = 'form-control mb-1';
+                        newInput.name = data[i].question_short;
+                        newInput.required = true;
+                        newInput.id = data[i].question_short;
+                        newInput.disabled = true;
+                        newInput.value = formData[data[i].question_short];
+                    } else {
+                        var newInput = document.createElement('input');
+                        newInput.type = data[i].question_type;
+                        newInput.className = 'form-control mb-1';
+                        newInput.name = data[i].question_short;
+                        newInput.required = true;
+                        newInput.id = data[i].question_short;
+                        newInput.disabled = true;
+                        newInput.value = formData[data[i].question_short];
+                    }
+
+                    // append the label and input to the div
+                    newDiv.appendChild(newLabel);
+                    newDiv.appendChild(newInput);
+
+                    // append the div to the form
+                    document.getElementsByTagName('form')[0].appendChild(newDiv);
+                }
+
+                // let submitButton = document.createElement('button');
+                // submitButton.type = 'submit';
+                // submitButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mt-3';
+                // submitButton.innerHTML = '<i class="fa-solid fa-check"></i> Submit';
+                // submitButton.id = 'btnSubmit';
+                // document.getElementsByTagName('form')[0].appendChild(submitButton);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+</script>
