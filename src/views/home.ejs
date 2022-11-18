@@ -2,7 +2,7 @@
 
 <head>
     <%- include('components/header', { title: 'Home' }) %>
-    <link rel="stylesheet" href="./public/css/main.css">
+        <link rel="stylesheet" href="../public/css/main.css">
 </head>
 
 <body>
@@ -11,17 +11,26 @@
             <h1 class="fancy-header">My Panel</h1>
             <p class="text-secondary mb-5">Welcome back, <%- session.userTag %>!</p>
 
-            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+            <div>
                 <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
-                    onclick="window.location.href = '/new';"><i class="fa-solid fa-pen-nib"></i> Fill out a
-                    form</button>
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" id="liveToastBtn">
+                    onclick="window.location.href = '/new';"><i class="fa-solid fa-pen-nib"></i> Applications</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/my';">
                     <i class="fa-solid fa-eye"></i> View my submissions</button>
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                <button class="btn btn-lg btn-danger text-white btn-block w-100"
                     onclick="window.location.href = '/api/logout';"><i class="fa-solid fa-arrow-right-from-bracket"></i>
                     Logout</button>
-                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
-            </p>
+            </div>
+
+            <div id="btnToolbar" class="btn-toolbar mt-5 mb-3" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/transparency';"><i class="fa-solid fa-info"></i> Data
+                    Transparency</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/credits';"><i class="fa-solid fa-scroll"></i> Credits</button>
+            </div>
+
+            &copy; Protagnst Media LLC / Blaze Productions LLC 2022
         </div>
     </div>
 
