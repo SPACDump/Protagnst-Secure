@@ -2,7 +2,7 @@ const Router = require('../classes/Router');
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const redirect = encodeURIComponent('http://localhost:3000/api/passport/callback');
+const redirect = encodeURIComponent(`${process.env.HOSTNAME}/api/passport/callback`);
 
 const fetch = require('node-fetch-commonjs');
 const { getAvailableForms, getPreviousSubmissions } = require('../utilities/formFunctions');
@@ -51,7 +51,7 @@ class API extends Router {
                 'client_secret': CLIENT_SECRET,
                 'grant_type': 'authorization_code',
                 'code': code,
-                'redirect_uri': `http://localhost:3000/api/passport/callback`,
+                'redirect_uri': `${process.env.HOSTNAME}/api/passport/callback`,
                 'scope': 'identify%20email%20guilds.join'
             };
 
