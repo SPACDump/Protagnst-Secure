@@ -11,7 +11,7 @@ const Logger = require('../utilities/consoleLog');
 const sessions = require('express-session');
 require('dotenv').config();
 const { makeConnection, executeMysqlQuery } = require('../utilities/mysqlHelper');
-const { getFormById } = require('../utilities/getAvailableForms');
+const { getFormById } = require('../utilities/formFunctions');
 
 // start mysql connection
 makeConnection();
@@ -77,6 +77,7 @@ class App {
 
         this.app.get('/', async function (req, res) {
             let session = req.session;
+
             if (session.discordId) {
                 res.render('home.ejs', {
                     session: req.session
@@ -123,7 +124,7 @@ class App {
         this.app.get('/my', async function (req, res) {
             let session = req.session;
             if (session.discordId) {
-                res.render('viewSubmissions.ejs', {
+                res.render('selectAvailableSubmission.ejs', {
                     session: req.session
                 });
             } else {
@@ -142,9 +143,9 @@ class App {
             // check permissions
             // get form from mysql
             let form = await getFormById(formId);
+            if (!form) return res.redirect('/404');
+
             let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            console.log(user);
-            console.log(form);
 
             let userPermission = user[0].permission_level;
 
