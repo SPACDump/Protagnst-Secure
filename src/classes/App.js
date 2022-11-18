@@ -161,6 +161,28 @@ class App {
             });
         });
 
+        this.app.get('/admin', async (req, res) => {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+            let userPermission = user[0].permission_level;
+
+            if (userPermission > 2) return res.render('admin.ejs', { session: req.session });
+            else return res.redirect('/403');
+        });
+
+        this.app.get('/developer', async (req, res) => {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+            let userPermission = user[0].permission_level;
+
+            if (userPermission > 49) return res.render('developer.ejs', { session: req.session });
+            else return res.redirect('/403');
+        });
+
         this.app.get('/transparency', async (req, res) => {
             res.render('transparency.ejs');
         });
