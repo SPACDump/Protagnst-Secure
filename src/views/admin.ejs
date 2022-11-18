@@ -1,0 +1,75 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Admin Panel' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Admin</h1>
+            <p class="text-secondary mb-5">Welcome to The Real World.
+            <p>
+
+            <div id="lg-buttons">
+                <p><b>TEMP:</b> Flow for View - Click -> Select an (open) form -> List applicants buttons</p>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/admin/view';"><i class="fa-solid fa-pen-nib"></i> View
+                    Applications</button>
+            </div>
+
+            <div id="btnToolbar" class="btn-toolbar" style="justify-content: center; display: flex;"></div>
+
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go back (to the future)</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    var toastTrigger = document.getElementById('liveToastBtn')
+    var toastLiveExample = document.getElementById('liveToast')
+    if (toastTrigger) {
+        toastTrigger.addEventListener('click', function () {
+            var toast = new bootstrap.Toast(toastLiveExample)
+
+            toast.show()
+        })
+    }
+
+    let userPermLevel = 1;
+
+    $(document).ready(async function () {
+        let userPerms = await fetch(`/api/fetchUserPerms/<%- session.discordId %>?isFromServer=170c455e9a4a`)
+            .then(res => res.json());
+
+        userPermLevel = userPerms.permission_level;
+
+        if (userPermLevel > 50) {
+            let submitButton = document.createElement('button');
+            submitButton.className = 'btn btn-dark text-white btn-md me-2';
+            submitButton.innerHTML = '<i class="fa-solid fa-terminal"></i> Developer Mode';
+            submitButton.onclick = () => window.location.href = '/developer';
+
+            $("#btnToolbar").append(submitButton);
+        }
+
+        if (userPermLevel >= 5) {
+            let button = document.createElement("button");
+            button.innerHTML = '<i class="fa-solid fa-gavel"></i> Ban user';
+            button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
+            button.setAttribute("onclick", "window.location.href = '/admin/ban';");
+
+            document.getElementById("lg-buttons").appendChild(button);
+        }
+    });
+</script>

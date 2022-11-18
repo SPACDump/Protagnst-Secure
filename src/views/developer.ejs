@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Developer Mode' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Developer</h1>
+            <p class="text-secondary mb-5">You have successfully escaped The Matrix.
+            <p>
+
+            <div id="lg-buttons">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/dev/form';"><i class="fa-regular fa-file"></i> Create new
+                    form</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/dev/question';"><i class="fa-solid fa-question"></i> Create new
+                    question</button>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/dev/perm';"><i class="fa-solid fa-user-shield"></i> Set user permission
+                    level</button>
+            </div>
+
+            <div id="btnToolbar" class="btn-toolbar" style="justify-content: center; display: flex;"></div>
+
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go back (to the future)</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    var toastTrigger = document.getElementById('liveToastBtn')
+    var toastLiveExample = document.getElementById('liveToast')
+    if (toastTrigger) {
+        toastTrigger.addEventListener('click', function () {
+            var toast = new bootstrap.Toast(toastLiveExample)
+
+            toast.show()
+        })
+    }
+</script>
