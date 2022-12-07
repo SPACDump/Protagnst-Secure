@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `submissions` (
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
   `discord_id` varchar(30) NOT NULL,
-  `refresh_token` varchar(30) NOT NULL,
+  `refresh_token` varchar(60) NOT NULL,
   `permission_level` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`discord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
