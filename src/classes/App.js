@@ -203,6 +203,10 @@ class App {
             else return res.redirect('/403');
         });
 
+        this.app.get('/admin/export', async (req, res) => {
+            
+        });
+
         this.app.get('/developer', async (req, res) => {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
