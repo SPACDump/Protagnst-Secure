@@ -24,6 +24,25 @@ async function getAvailableForms(req) {
     return false;
 }
 
+async function getOpenForms(req) {
+    let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
+    let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+
+    let userPermission = user[0].permission_level;
+
+    for (let i = 0; i < formsArray.length; i++) {
+        if (formsArray[i].permissions_needed > userPermission) {
+            formsArray.splice(i, 1);
+            i--;
+        }
+    }
+
+    formsArray = formsArray.filter(form => form.is_hidden !== 1);
+
+    if (formsArray.length > 0) return formsArray;
+    return false;
+}
+
 async function getPreviousSubmissions(req) {
     if (!req.session.discordId) return false;
 
@@ -51,4 +70,4 @@ async function getFormById(formId) {
     return form[0];
 }
 
-module.exports = { getAvailableForms, getFormById, getPreviousSubmissions };
+module.exports = { getAvailableForms, getFormById, getPreviousSubmissions, getOpenForms };
