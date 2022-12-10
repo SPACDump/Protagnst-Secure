@@ -71,6 +71,11 @@ class App {
             if (req.session.discordId) res.redirect('/');
             else res.render('auth.ejs');
         });
+        
+        this.app.get('/ban', async function (req, res) {
+            if (!req.session.discordId) res.redirect('/');
+            else res.render('userBanned.ejs');
+        });
 
         this.app.get('/', async function (req, res) {
             let session = req.session;
