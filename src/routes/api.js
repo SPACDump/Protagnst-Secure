@@ -25,6 +25,15 @@ class API extends Router {
         super(client, '/api');
     }
     createRoute() {
+        this.router.use(function (req, res, next) {
+            if (req.session.isBanned === true) {
+                let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
+                if (allowedPages.includes(req.path)) next();
+                else res.redirect('/ban');
+            } else {
+                next();
+            }
+        });
 
         this.router.get('/', async (req, res) => {
             try {
