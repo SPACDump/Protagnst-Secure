@@ -1,0 +1,156 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Select a Form' }) %>
+        <link rel="stylesheet" href="../../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Export Responses</h1>
+            <p class="text-secondary mb-5">Uninstalling bootloader. You're on your own!</p>
+
+            <p id="pTagLoading" class="mb-5">Your requested file is being downloaded.<br />Please wait a few moments...
+            </p>
+
+            <p class="mt-3 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = '/';"><i class="fa-solid fa-house"></i> Go home</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                    Please try again later.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    window.onload = async function () {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+        let lastParam = url.pathname.split('/').pop();
+        // let urlToDownload = hostname + '/api/admin/export/' + lastParam + `?isFromServer=37c14b8a8b98`;
+
+        // let csvData;
+
+        // let response = await fetch(urlToDownload, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(res => res.json()).then(data => csvData = data);
+
+        // const blob = new Blob([csvData], {
+        //     type: 'text/csv'
+        // });
+
+        // const urlToDownloadFile = window.URL.createObjectURL(blob);
+
+        // const a = document.createElement('a');
+        // a.setAttribute('hidden', '');
+        // a.setAttribute('href', urlToDownloadFile);
+        // a.setAttribute('download', 'responses.csv');
+        // await a.click();
+
+        // window.location.href = '/admin';
+        function convertToCSV(objArray) {
+            var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+            var str = '';
+
+            for (var i = 0; i < array.length; i++) {
+                var line = '';
+                for (var index in array[i]) {
+                    if (line != '') line += ','
+
+                    line += array[i][index];
+                }
+
+                str += line + '\r\n';
+            }
+
+            return str;
+        }
+
+        function exportCSVFile(headers, items, fileTitle) {
+            if (headers) {
+                items.unshift(headers);
+            }
+
+            var jsonObject = JSON.stringify(items);
+
+            var csv = convertToCSV(jsonObject);
+
+            var exportedFilename = fileTitle + '.csv' || 'export.csv';
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, exportedFilename);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) {
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", exportedFilename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        }
+        
+        let formData;
+        let form = await fetch(`/api/getFormById/${lastParam}?isFromServer=abc54fc6a01a`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => formData = data);
+        
+        let headers = {};
+        formData.questions.forEach(question => {
+            headers[question.question_short] = question.question;
+        });
+
+        let responses;
+        let submissionFetch = await fetch(`/api/currentSubmissions/${lastParam}?isFromServer=fdd04d8ca52b`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => responses = data);
+
+        let itemsFormatted = [];
+        responses.forEach(response => {
+            let parsedFormData = JSON.parse(response.form_data);
+            
+            let mappedFormData = {};
+            for (let key in parsedFormData) {
+                mappedFormData[headers[key]] = parsedFormData[key];
+            }
+
+            itemsFormatted.push(mappedFormData);
+        });
+
+        var fileTitle = `Form ${lastParam} Responses`;
+
+        exportCSVFile(headers, itemsFormatted, fileTitle);
+    }
+</script>
