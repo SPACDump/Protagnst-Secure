@@ -18,9 +18,9 @@
 
             <p id="pTagLoading">Loading...</p>
 
-            <div id="hereTheFormsGo" class="mb-3"></div>
+            <div id="hereTheFormsGo" class="mb-2"></div>
 
-            <p class="mt-3 mb-1 text-secondary text-center fs-6">
+            <p class="mb-1 text-secondary text-center fs-6">
                 <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
                     onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
                     Go back</button>
@@ -50,12 +50,6 @@
 
 <script>
     window.onload = async function () {
-        // Get the hostname
-        // Fetch /api/admin/getOpenApplications
-        // If there are no open applications, display a message
-        // If there are open applications, display a button for each one
-        // When a button is clicked, redirect to /view/:formId
-
         let url = new URL(window.location.href);
         let hostname = url.origin;
 
