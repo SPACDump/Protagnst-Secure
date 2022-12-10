@@ -95,10 +95,11 @@ class API extends Router {
             // if user exists, delete
             if (userExists.length > 0) {
                 let userOldPermission = userExists[0].permission_level;
+                let userOldBanStatus = userExists[0].is_banned;
                 await executeMysqlQuery(`DELETE FROM users WHERE discord_id = ?`, [userJson.id]);
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, encryptedRefreshToken, userOldPermission]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level, is_banned) VALUES (?, ?, ?, ?)`, [userJson.id, encryptedRefreshToken, userOldPermission, userOldBanStatus]);
             } else {
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level) VALUES (?, ?, ?)`, [userJson.id, encryptedRefreshToken, 1]);
+                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level, is_banned) VALUES (?, ?, ?, ?)`, [userJson.id, encryptedRefreshToken, 1, 0]);
             }
 
             res.set(200).redirect('/');
