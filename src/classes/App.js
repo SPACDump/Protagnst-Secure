@@ -81,6 +81,14 @@ class App {
             let session = req.session;
 
             if (session.discordId) {
+                let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = (?)`, [req.session.discordId]);
+                if (user[0]) {
+                    if (user[0].is_banned === 1) {
+                        req.session.isBanned = true;
+                        return res.redirect('/ban');
+                    }
+                }
+
                 res.render('home.ejs', {
                     session: req.session
                 });
