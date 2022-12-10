@@ -267,6 +267,26 @@ class API extends Router {
             }
         });
 
+        this.router.get('/admin/export/:formId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ?`, [req.params.formId]);
+            let questions = await executeMysqlQuery(`SELECT * FROM questions WHERE id = ?`, [req.params.formId]);
+            if (questions.length < 1) return res.json({ "error": "No questions on form" });
+
+            let csvRows = [];
+            let headers = Object.keys(JSON.parse(submissions[0].form_data));
+            csvRows.push(headers.join(','));
+            submissions.forEach(submission => {
+                csvRows.push(Object.values(JSON.parse(submission.form_data)).join(','));
+            });
+
+            return res.send(csvRows.join('\n'));
+        });
+
         this.router.get('/getProfileById/:discordId', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
