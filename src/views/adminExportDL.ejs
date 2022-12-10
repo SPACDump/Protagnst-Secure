@@ -125,6 +125,8 @@
         }).then(res => res.json()).then(data => formData = data);
         
         let headers = {};
+        headers['submission_id'] = 'Submission ID';
+        headers['discord_id'] = 'Discord ID';
         formData.questions.forEach(question => {
             headers[question.question_short] = question.question;
         });
@@ -142,8 +144,11 @@
             let parsedFormData = JSON.parse(response.form_data);
             
             let mappedFormData = {};
+            mappedFormData[headers['submission_id']] = response.submission_id;
+            mappedFormData[headers['discord_id']] = response.discord_id;
+
             for (let key in parsedFormData) {
-                mappedFormData[headers[key]] = parsedFormData[key];
+                mappedFormData[headers[key]] = parsedFormData[key] || 'N/A';
             }
 
             itemsFormatted.push(mappedFormData);
