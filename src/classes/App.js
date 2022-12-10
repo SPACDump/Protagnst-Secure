@@ -47,9 +47,6 @@ class App {
             extended: true
         }));
         this.app.use('/public', express.static(path.join(__dirname, '..', 'public')));
-        this.app.use('/docs', express.static(path.join(__dirname, '..', 'docs')))
-
-
     }
 
     async registerRoutes() {
