@@ -67,6 +67,16 @@ class App {
             }
         }
 
+        this.app.use(function (req, res, next) {
+            if (req.session.isBanned === true) {
+                let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
+                if (allowedPages.includes(req.path)) next();
+                else res.redirect('/ban');
+            } else {
+                next();
+            }
+        });
+
         this.app.get('/auth', async function (req, res) {
             if (req.session.discordId) res.redirect('/');
             else res.render('auth.ejs');
