@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const redirect = encodeURIComponent(`${process.env.HOSTNAME}/api/passport/callback`);
 
 const fetch = require('node-fetch-commonjs');
-const { getAvailableForms, getPreviousSubmissions } = require('../utilities/formFunctions');
+const { getAvailableForms, getPreviousSubmissions, getOpenForms } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { encrypt } = require('../utilities/aes');
 
@@ -100,6 +100,13 @@ class API extends Router {
             let forms = await getAvailableForms(req);
             if (forms) return res.json(forms);
             else return res.json({ "message": "There are no forms available for you right now!" });
+        });
+
+        this.router.get('/getShownForms', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+            let forms = await getOpenForms(req);
+            if (forms) return res.json(forms);
+            else return res.json({ "error": "There are no forms available for you right now!" });
         });
 
         this.router.get('/getPreviousSubmissions', async (req, res) => {
