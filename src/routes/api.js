@@ -279,7 +279,7 @@ class API extends Router {
                 }
             });
 
-            if (!response.ok) return res.json({ "error": "User not found" });
+            if (response.status !== 200) return res.json({ "error": "User not found" });
             return res.json(await response.json());
         });
 
