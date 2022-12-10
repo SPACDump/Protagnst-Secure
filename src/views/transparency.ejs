@@ -71,19 +71,20 @@
                                 else in the database.</td>
                         </tr>
                         <tr>
-                            <th scope="row">Your Discord Authorization Refresh Key (More on this below)</th>
+                            <th scope="row">Your Discord Authorization Refresh Key</th>
                             <td>We store your refresh key so that we can add you to a Discord Server when you are
                                 accepted. The reason we keep your refresh key is because unlike your authorization key
                                 (which expires after 7 days), your refresh key stays the same until you de-authorize the
                                 app in your User Settings. <a class="text-decoration-none"
                                     href="/transparency/deauth">Click here for a guide on deauthorizing the app.</a>
+                                    <br /><b>Note: We encrypt this piece of data as it can be sensitive. We use Crypto-AES 256 Bit Encryption with a private decryption key to avoid your data being leaked.</b>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">Your Permission Level</th>
                             <td>We store a permission level internally so that we can control what you access. We use
                                 this to stop you from accessing a form you're not meant to <i>or finding your way into
-                                    the staff dashboard without permission 👮</i><br /><b>Note: We encrypt this piece of data as it can be sensitive. We use Crypto-AES 256 Bit Encryption with a private decryption key to avoid your data being leaked.</b></td>
+                                    the staff dashboard without permission 👮</i></td>
                         </tr>
                     </tbody>
                 </table>
