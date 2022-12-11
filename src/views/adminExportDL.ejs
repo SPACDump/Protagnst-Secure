@@ -128,7 +128,9 @@
         headers['submission_id'] = 'Submission ID';
         headers['discord_id'] = 'Discord ID';
         formData.questions.forEach(question => {
-            headers[question.question_short] = question.question;
+            let data = question.question;
+            data = data.replace(/,/g, '');
+            headers[question.question_short] = data;
         });
 
         let responses;
@@ -148,7 +150,11 @@
             mappedFormData[headers['discord_id']] = response.discord_id;
 
             for (let key in parsedFormData) {
-                mappedFormData[headers[key]] = parsedFormData[key] || 'N/A';
+                let data = parsedFormData[key];
+                if (typeof data === 'undefined' || data === null || data === '') data = 'N/A';
+                data = data.replace(/,/g, '');
+
+                mappedFormData[headers[key]] = data;
             }
 
             itemsFormatted.push(mappedFormData);
