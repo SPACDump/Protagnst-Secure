@@ -27,7 +27,7 @@ class API extends Router {
     createRoute() {
         this.router.use(function (req, res, next) {
             if (req.session.isBanned === true) {
-                let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
+                let allowedPages = ['/logout']; // they are not allowed to access the API
                 if (allowedPages.includes(req.path)) next();
                 else res.redirect('/ban');
             } else {
