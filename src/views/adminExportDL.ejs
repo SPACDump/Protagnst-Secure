@@ -46,30 +46,7 @@
         let url = new URL(window.location.href);
         let hostname = url.origin;
         let lastParam = url.pathname.split('/').pop();
-        // let urlToDownload = hostname + '/api/admin/export/' + lastParam + `?isFromServer=37c14b8a8b98`;
-
-        // let csvData;
-
-        // let response = await fetch(urlToDownload, {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(res => res.json()).then(data => csvData = data);
-
-        // const blob = new Blob([csvData], {
-        //     type: 'text/csv'
-        // });
-
-        // const urlToDownloadFile = window.URL.createObjectURL(blob);
-
-        // const a = document.createElement('a');
-        // a.setAttribute('hidden', '');
-        // a.setAttribute('href', urlToDownloadFile);
-        // a.setAttribute('download', 'responses.csv');
-        // await a.click();
-
-        // window.location.href = '/admin';
+        
         function convertToCSV(objArray) {
             var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
             var str = '';
