@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Login' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header">Ban User</h1>
+            <p class="text-secondary mb-5">Fill out the User's ID below to update Ban Status</p>
+
+            <form onSubmit="event.preventDefault(); return handleBanToggle();">
+                <div class="form-label-group">
+                    <input type="text" id="userid" class="form-control mb-2" placeholder="User ID" name="userid"
+                        required>
+                </div>
+                <button class="btn btn-lg btn-primary text-white btn-block w-100" type="submit" id="btnSubmit">Toggle Ban
+                    Status</button>
+            </form>
+
+            <p class="mt-5 mb-3 text-secondary text-center fs-6">
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go back</button>
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Welcome home.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+<script>
+    async function handleBanToggle() {
+        // make api request
+        const userid = document.getElementById("userid").value;
+        $('#btnSubmit').prop('disabled', true);
+
+        fetch("/api/admin/toggleBanStatus", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userid,
+            }),
+        })
+            .then((res) => res.json())
+            .then(async (data) => {
+                if (data.error) {
+                    $('#btnSubmit').prop('disabled', false);
+                    let error = "There was an error processing your request.";
+                    switch (data.error) {
+                        case "missingEmailOrPassword":
+                            error = "Please identify your ship, commander!";
+                            break;
+                        default:
+                            break;
+                    }
+                    showErrorToast('liveToast', error);
+                    return false;
+                } else if (data.success) {
+                    await showSuccessToast('successToast', data.message);
+                    await sleep(3000);
+                    window.location.href = "/admin";
+                } else {
+                    showErrorToast('liveToast', "There was an error processing your request.");
+                    return false;
+                }
+            });
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function showErrorToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+
+    function showSuccessToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+</script>
+
+</html>
