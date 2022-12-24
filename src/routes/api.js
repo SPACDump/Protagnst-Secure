@@ -326,6 +326,29 @@ class API extends Router {
             }
         });
 
+        this.router.post('/dev/updatePermissionLevel', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'dTs54Cskv38ga1') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.body.userid]);
+            if (!userData.length) return res.json({ "error": "User not found" });
+
+            if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot change your own permissions" });
+
+            let discordData;
+            let hostname = req.headers.host;
+            let protocol = req.protocol;
+            let url = protocol + '://' + hostname + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
+            await fetch(url).then(res => res.json()).then((data) => discordData = data);
+
+            let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
+
+            await executeMysqlQuery(`UPDATE users SET permission_level = ? WHERE discord_id = ?`, [req.body.newPerms, discordData.id]);
+            return res.json({ success: true, message: `Successfully updated ${discordName}'s permission level.\nWas: ${userData[0].permission_level} | Now: ${req.body.newPerms}` });
+        });
+
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'c2f64dea9444') return res.json({ "error": "You are not allowed to use this endpoint" });
 
