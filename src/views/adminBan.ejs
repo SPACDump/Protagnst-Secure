@@ -65,7 +65,7 @@
         const userid = document.getElementById("userid").value;
         $('#btnSubmit').prop('disabled', true);
 
-        fetch("/api/admin/toggleBanStatus", {
+        fetch("/api/admin/toggleBanStatus?isFromServer=reLi3NK5asd6", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
