@@ -297,7 +297,6 @@ class API extends Router {
             return res.send(csvRows.join('\n'));
         });
 
-        this.router.get('/getProfileById/:discordId', async (req, res) => {
         this.router.post('/admin/toggleBanStatus', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
@@ -348,6 +347,9 @@ class API extends Router {
             await executeMysqlQuery(`UPDATE users SET permission_level = ? WHERE discord_id = ?`, [req.body.newPerms, discordData.id]);
             return res.json({ success: true, message: `Successfully updated ${discordName}'s permission level.\nWas: ${userData[0].permission_level} | Now: ${req.body.newPerms}` });
         });
+
+        this.router.get('/getProfileById/:discordId', async (req, res) => {
+            if (!req.session.discordId && !req.query.requestId) return res.json({ "error": "You are not logged in" });
 
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'c2f64dea9444') return res.json({ "error": "You are not allowed to use this endpoint" });
