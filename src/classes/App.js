@@ -257,6 +257,13 @@ class App {
             if (userPermission >= 50) return res.render('devUpdatePerms.ejs', { session: req.session });
             else return res.redirect('/403');
         });
+
+        this.app.get('/developer/form', async (req, res) => {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPermission = await checkUserPermissions(req.session.discordId);
+
             if (userPermission >= 50) return res.render('devCreateForm.ejs', { session: req.session });
             else return res.redirect('/403');
         });
