@@ -86,7 +86,7 @@
                 } else if (data.success) {
                     await showSuccessToast('successToast', data.message);
                     await sleep(3000);
-                    window.location.href = "/admin";
+                    window.location.href = "/admin/ban";
                 } else {
                     showErrorToast('liveToast', "There was an error processing your request.");
                     return false;
