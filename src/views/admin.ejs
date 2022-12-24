@@ -53,15 +53,6 @@
 
         userPermLevel = userPerms.permission_level;
 
-        if (userPermLevel > 50) {
-            let submitButton = document.createElement('button');
-            submitButton.className = 'btn btn-dark text-white btn-md me-2';
-            submitButton.innerHTML = '<i class="fa-solid fa-terminal"></i> Developer Mode';
-            submitButton.onclick = () => window.location.href = '/developer';
-
-            $("#btnToolbar").append(submitButton);
-        }
-
         if (userPermLevel >= 5) {
             let button = document.createElement("button");
             button.innerHTML = '<i class="fa-solid fa-gavel"></i> Ban user';
@@ -69,6 +60,15 @@
             button.setAttribute("onclick", "window.location.href = '/admin/ban';");
 
             document.getElementById("lg-buttons").appendChild(button);
+        }
+
+        if (userPermLevel >= 50) {
+            let submitButton = document.createElement('button');
+            submitButton.className = 'btn btn-lg btn-dark text-white btn-block w-100 mb-3';
+            submitButton.innerHTML = '<i class="fa-solid fa-terminal"></i> Developer Mode';
+            submitButton.onclick = () => window.location.href = '/developer';
+
+            $("#lg-buttons").append(submitButton);
         }
     });
 </script>
