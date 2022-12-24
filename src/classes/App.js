@@ -131,25 +131,13 @@ class App {
         });
 
         this.app.get('/new', async function (req, res) {
-            let session = req.session;
-            if (session.discordId) {
-                res.render('selectNewForm.ejs', {
-                    session: req.session
-                });
-            } else {
-                res.redirect('/auth');
-            }
+            if (!req.session.discordId) return res.redirect('/auth');
+            else res.render('selectNewForm.ejs', { session: req.session });
         });
 
         this.app.get('/my', async function (req, res) {
-            let session = req.session;
-            if (session.discordId) {
-                res.render('selectAvailableSubmission.ejs', {
-                    session: req.session
-                });
-            } else {
-                res.redirect('/auth');
-            }
+            if (!req.session.discordId) return res.redirect('/auth');
+            else res.render('selectAvailableSubmission.ejs', { session: req.session });
         });
 
         this.app.get('/view/:submissionId', async function (req, res) {
