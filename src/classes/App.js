@@ -148,7 +148,8 @@ class App {
             let subData = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionId]);
             if (subData.length < 0) return res.redirect('/404');
 
-            if (subData[0].discord_id != session.discordId) return res.redirect('/403');
+            let userPerms = await checkUserPermissions(session.discordId);
+            if (subData[0].discord_id != session.discordId && userPerms <= 2) return res.redirect('/403');
 
             let formData = await getFormById(subData[0].form_id);
             if (!formData) return res.redirect('/404');
@@ -173,12 +174,9 @@ class App {
             let form = await getFormById(formId);
             if (!form) return res.redirect('/404');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+            let userPerms = await checkUserPermissions(discordId);
 
-            let userPermission = user[0].permission_level;
-
-            // if userperms are lower than formperms
-            if (userPermission < form.permissions_needed) {
+            if (userPerms < form.permissions_needed) {
                 return res.redirect('/403');
             };
 
@@ -193,8 +191,7 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
             if (userPermission > 2) return res.render('admin.ejs', { session: req.session });
             else return res.redirect('/403');
@@ -204,8 +201,7 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
             if (userPermission > 2) return res.render('adminView.ejs', { session: req.session });
             else return res.redirect('/403');
@@ -215,8 +211,7 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
             if (userPermission > 2) return res.render('adminExport.ejs', { session: req.session });
             else return res.redirect('/403');
@@ -226,8 +221,7 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
             if (userPermission > 2) return res.render('adminExportDL.ejs', { session: req.session });
             else return res.redirect('/403');
@@ -237,8 +231,7 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
             if (userPermission > 2) return res.render('adminBan.ejs', { session: req.session });
             else return res.redirect('/403');
@@ -248,10 +241,9 @@ class App {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
-            let userPermission = user[0].permission_level;
+            let userPermission = await checkUserPermissions(req.session.discordId);
 
-            if (userPermission > 49) return res.render('developer.ejs', { session: req.session });
+            if (userPermission >= 50) return res.render('devCreateForm.ejs', { session: req.session });
             else return res.redirect('/403');
         });
 
