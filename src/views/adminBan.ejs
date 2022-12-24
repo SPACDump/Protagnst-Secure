@@ -79,13 +79,8 @@
                 if (data.error) {
                     $('#btnSubmit').prop('disabled', false);
                     let error = "There was an error processing your request.";
-                    switch (data.error) {
-                        case "missingEmailOrPassword":
-                            error = "Please identify your ship, commander!";
-                            break;
-                        default:
-                            break;
-                    }
+                    if (data.error) error = data.error;
+
                     showErrorToast('liveToast', error);
                     return false;
                 } else if (data.success) {
