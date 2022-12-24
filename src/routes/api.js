@@ -298,7 +298,33 @@ class API extends Router {
         });
 
         this.router.get('/getProfileById/:discordId', async (req, res) => {
+        this.router.post('/admin/toggleBanStatus', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'reLi3NK5asd6') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.body.userid]);
+            if (!userData.length) return res.json({ "error": "User not found" });
+
+            if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot ban yourself" });
+
+            let discordData;
+            let hostname = req.headers.host;
+            let protocol = req.protocol;
+            let url = protocol + '://' + hostname + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
+            await fetch(url).then(res => res.json()).then((data) => discordData = data);
+
+            let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
+
+            if (userData[0].is_banned) {
+                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [0, discordData.id]);
+                return res.json({ success: true, message: `Successfully unbanned ${discordName}` });
+            } else {
+                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [1, discordData.id]);
+                return res.json({ success: true, message: `Successfully banned ${discordName}` });
+            }
+        });
 
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'c2f64dea9444') return res.json({ "error": "You are not allowed to use this endpoint" });
