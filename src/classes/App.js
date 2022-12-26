@@ -264,6 +264,16 @@ class App {
             else return res.redirect('/403');
         });
 
+        this.app.get('/developer/question', async (req, res) => {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPermission = await checkUserPermissions(req.session.discordId);
+
+            if (userPermission >= 50) return res.render('devCreateQuestion.ejs', { session: req.session });
+            else return res.redirect('/403');
+        });
+
         this.app.get('/transparency', async (req, res) => {
             return res.render('transparency.ejs');
         });
