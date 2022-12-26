@@ -368,6 +368,16 @@ class API extends Router {
             return res.json({ success: true, message: `A new question was successfully created.\nForm ID: ${formId}\nQuestion ID: ${nfData.insertId}` });
         });
 
+        this.router.get('/dev/getAllForms', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'ixwAW5LXGTjgG') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let forms = await executeMysqlQuery(`SELECT * FROM forms`);
+            return res.json(forms);
+        });
+
         this.router.get('/getProfileById/:discordId', async (req, res) => {
             if (!req.session.discordId && !req.query.requestId) return res.json({ "error": "You are not logged in" });
 
