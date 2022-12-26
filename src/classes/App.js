@@ -71,74 +71,70 @@ class App {
         this.app.use(function (req, res, next) {
             if (req.session.isBanned === true) {
                 let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
-                if (allowedPages.includes(req.path)) next();
-                else res.redirect('/ban');
-            } else {
-                next();
+                if (allowedPages.includes(req.path)) return next();
+                else return res.redirect('/ban');
             }
+
+            return next();
         });
 
         this.app.get('/auth', async function (req, res) {
-            if (req.session.discordId) res.redirect('/');
-            else res.render('auth.ejs');
+            if (req.session.discordId) return res.redirect('/');
+            return res.render('auth.ejs');
         });
         
         this.app.get('/ban', async function (req, res) {
-            if (!req.session.discordId) res.redirect('/');
-            else res.render('userBanned.ejs');
+            if (!req.session.discordId || !req.session.isBanned) return res.redirect('/');
+            return res.render('userBanned.ejs');
         });
 
         this.app.get('/', async function (req, res) {
             let session = req.session;
 
-            if (session.discordId) {
-                let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = (?)`, [req.session.discordId]);
-                if (user[0]) {
-                    if (user[0].is_banned === 1) {
-                        req.session.isBanned = true;
-                        return res.redirect('/ban');
-                    }
-                }
+            if (!session.discordId) return res.redirect('/auth');
+            let banStatus = await getUserBanStatus(session.discordId);
 
-                res.render('home.ejs', {
-                    session: req.session
-                });
-            } else {
-                res.redirect('/auth');
+            if (banStatus) {
+                session.isBanned = true;
+                return res.redirect('/ban');
             }
+
+            return res.render('home.ejs', { session: session });
         });
 
         this.app.get('/support', async function (req, res) {
-            res.render('support.ejs');
+            return res.render('support.ejs');
         });
 
         this.app.get('/error/:errorCode', async function (req, res) {
             let errorCode = req.params.errorCode;
             let reason;
+
             switch (errorCode) {
                 case "firstCode": { reason = "Example, default, first error code"; break; };
                 default: { reason = "An unknown error ocurred"; break; };
             }
-            res.render('dataError.ejs', { errorReason: reason })
+
+            return res.render('dataError.ejs', { errorReason: reason })
         });
 
         this.app.get('/403', async function (req, res) {
-            res.status(403).render('403.ejs');
+            return res.status(403).render('403.ejs');
         });
 
         this.app.get('/jswarning', async function (req, res) {
             if (req.session.discordId) return res.redirect('/');
-            res.render('jswarning.ejs');
+            return res.render('jswarning.ejs');
         });
 
         this.app.get('/new', async function (req, res) {
             if (!req.session.discordId) return res.redirect('/auth');
-            else res.render('selectNewForm.ejs', { session: req.session });
+            return res.render('selectNewForm.ejs', { session: req.session });
         });
 
         this.app.get('/my', async function (req, res) {
             if (!req.session.discordId) return res.redirect('/auth');
-            else res.render('selectAvailableSubmission.ejs', { session: req.session });
+            return res.render('selectAvailableSubmission.ejs', { session: req.session });
         });
 
         this.app.get('/view/:submissionId', async function (req, res) {
@@ -181,7 +177,7 @@ class App {
                 return res.redirect('/403');
             };
 
-            res.render('fill.ejs', {
+            return res.render('fill.ejs', {
                 formId: form.id,
                 formName: form.form_name,
                 session: req.session
@@ -269,19 +265,19 @@ class App {
         });
 
         this.app.get('/transparency', async (req, res) => {
-            res.render('transparency.ejs');
+            return res.render('transparency.ejs');
         });
 
         this.app.get('/transparency/deauth', async (req, res) => {
-            res.render('deauth-guide.ejs');
+            return res.render('deauth-guide.ejs');
         });
 
         this.app.get('/credits', async (req, res) => {
-            res.render('credits.ejs');
+            return res.render('credits.ejs');
         });
 
         this.app.use((req, res) => {
-            res.render('404.ejs');
+            return res.render('404.ejs');
         });
     }
 
