@@ -78,18 +78,25 @@
 <script>
     async function handleNewFormCreate() {
         // make api request
-        const userid = document.getElementById("userid").value;
-        const newPerms = document.getElementById("permlvl").value;
+        let formName = $('#formname').val();
+        let formDescription = $('#formdesc').val();
+        let formPerms = $('#permsneeded').val();
+        let formShown = $('#ishidden').val();
+        let formMaxResponses = $('#maxresponses').val();
+
         $('#btnSubmit').prop('disabled', true);
 
-        fetch("/api/dev/updatePermissionLevel?isFromServer=dTs54Cskv38ga1", {
+        fetch("/api/dev/createNewForm?isFromServer=joRP228zYm213g", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                userid,
-                newPerms
+                formName,
+                formDescription,
+                formPerms,
+                formShown,
+                formMaxResponses
             }),
         })
             .then((res) => res.json())
@@ -104,7 +111,7 @@
                 } else if (data.success) {
                     await showSuccessToast('successToast', data.message);
                     await sleep(3000);
-                    window.location.href = "/developer/perm";
+                    window.location.href = "/developer/form";
                 } else {
                     showErrorToast('liveToast', "There was an error processing your request.");
                     return false;
