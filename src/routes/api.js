@@ -169,13 +169,8 @@ class API extends Router {
 
             if (req.session.discordId != req.params.discordId) return res.json({ "error": "You are not allowed to view this user's permissions" });
 
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.params.discordId]);
-
-            if (user.length > 0) {
-                return res.json({ "permission_level": user[0].permission_level });
-            } else {
-                return res.json({ "error": "User not found" });
-            }
+            let perms = await checkUserPermissions(req.session.discordId);
+            return res.json({ "permission_level": perms });
         });
 
         this.router.get('/currentResponses/:formId', async (req, res) => {
