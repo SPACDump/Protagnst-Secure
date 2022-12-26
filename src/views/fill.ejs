@@ -90,6 +90,10 @@
                         newInput.name = data[i].question_short;
                         newInput.required = true;
                         newInput.id = data[i].question_short;
+
+                        let emptyOption = document.createElement('option');
+                        newInput.appendChild(emptyOption);
+
                         var options = data[i].question_data.split('>>');
                         for (var j = 0; j < options.length; j++) {
                             var newOption = document.createElement('option');
