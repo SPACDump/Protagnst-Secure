@@ -39,7 +39,7 @@ async function getOpenForms(req) {
         }
     }
 
-    formsArray = formsArray.filter(form => form.is_hidden !== 1);
+    formsArray = formsArray.filter(form => form.is_hidden != 1);
 
     if (formsArray.length > 0) return formsArray;
     return false;
