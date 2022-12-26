@@ -14,24 +14,25 @@
 
             <form onSubmit="event.preventDefault(); return handleNewFormCreate();">
                 <div class="form-label-group">
-                    <p class="text-start mb-1 text-secondary">Form Name<span class="text-danger">*</span></p>
+                    <p class="text-start mb-1 text-secondary">Form Name <span class="text-danger">*</span></p>
                     <input type="text" id="formname" class="form-control mb-2" placeholder="Name of the form" name="formname" required>
 
                     <p class="text-start mb-1 text-secondary">Form Description<span class="text-danger">*</span></p>
                     <input type="textarea" id="formdesc" class="form-control mb-2" placeholder="Description of the form" name="formdesc" required>
+                    <p class="text-start mb-1 text-secondary">Form Description <span class="text-danger">*</span></p>
                     
-                    <p class="text-start mb-1 text-secondary">Permission Level<span class="text-danger">*</span></p>
                     <input type="number" id="permsneeded" class="form-control mb-2" placeholder="What perm level is needed?" name="permsneeded">
+                    <p class="text-start mb-1 text-secondary">Permission Level</p>
                     
-                    <p class="text-start mb-1 text-secondary">Form Visibility<span class="text-danger">*</span></p>
                     <select class="form-select mb-2" id="ishidden">
                         <option selected value="1">Is this form hidden by default?</option>
+                    <p class="text-start mb-1 text-secondary">Form Visibility</p>
                         <option value="0">No, show the form</option>
                         <option value="1">Yes, hide the form</option>
                     </select>
                     
-                    <p class="text-start mb-1 text-secondary">Maximum Responses<span class="text-danger">*</span></p>
                     <input type="number" id="maxresponses" class="form-control mb-3" placeholder="How many responses can this form have?" name="maxresponses">
+                    <p class="text-start mb-1 text-secondary">Maximum Responses</p>
                 </div>
                 <button class="btn btn-lg btn-primary text-white btn-block w-100" type="submit" id="btnSubmit">Create
                     new form</button>
