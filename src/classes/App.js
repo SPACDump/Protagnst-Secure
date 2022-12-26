@@ -111,7 +111,7 @@ class App {
             let reason;
 
             switch (errorCode) {
-                case "firstCode": { reason = "Example, default, first error code"; break; };
+                case "deprecated": { reason = "This page isn't really used anymore."; break; };
                 default: { reason = "An unknown error ocurred"; break; };
             }
 
