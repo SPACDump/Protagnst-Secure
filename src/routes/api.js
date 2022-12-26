@@ -8,6 +8,7 @@ const fetch = require('node-fetch-commonjs');
 const { getAvailableForms, getPreviousSubmissions, getOpenForms } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { encrypt } = require('../utilities/aes');
+const { checkUserPermissions } = require('../utilities/userFunctions');
 
 function _encode(obj) {
     let string = "";
