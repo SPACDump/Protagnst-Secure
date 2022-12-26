@@ -5,8 +5,6 @@
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
 
--- Minimum: MySQL v8.0.30
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -30,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
   `max_responses` int NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
@@ -45,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   PRIMARY KEY (`question_id`) USING BTREE,
   KEY `id` (`id`),
   CONSTRAINT `id` FOREIGN KEY (`id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
@@ -60,15 +58,17 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   PRIMARY KEY (`submission_id`,`discord_id`) USING BTREE,
   KEY `form_id` (`form_id`),
   CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `discord_id` varchar(30) NOT NULL,
-  `refresh_token` varchar(60) NOT NULL,
+  `discord_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `minecraft_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `refresh_token` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
   `permission_level` int NOT NULL DEFAULT '1',
+  `is_banned` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`discord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
