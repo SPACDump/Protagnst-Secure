@@ -20,18 +20,18 @@
                     <p class="text-start mb-1 text-secondary">Form Description <span class="text-danger">*</span></p>
                     <textarea id="formdesc" class="form-control mb-2" name="formdesc" placeholder="Description of the form" required></textarea>
                     
-                    <input type="number" id="permsneeded" class="form-control mb-2" placeholder="What perm level is needed?" name="permsneeded">
                     <p class="text-start mb-1 text-secondary">Permission Level</p>
+                    <input type="number" id="permsneeded" class="form-control mb-2" placeholder="What perm level is needed?" name="permsneeded" value="1">
                     
-                    <select class="form-select mb-2" id="ishidden">
-                        <option selected value="1">Is this form hidden by default?</option>
                     <p class="text-start mb-1 text-secondary">Form Visibility</p>
+                    <select class="form-select mb-2" id="ishidden" required>
+                        <option></option>
                         <option value="0">No, show the form</option>
                         <option value="1">Yes, hide the form</option>
                     </select>
                     
-                    <input type="number" id="maxresponses" class="form-control mb-3" placeholder="How many responses can this form have?" name="maxresponses">
                     <p class="text-start mb-1 text-secondary">Maximum Responses</p>
+                    <input type="number" id="maxresponses" class="form-control mb-3" placeholder="How many responses can this form have?" name="maxresponses" value="500">
                 </div>
                 <button class="btn btn-lg btn-primary text-white btn-block w-100" type="submit" id="btnSubmit">Create
                     new form</button>
