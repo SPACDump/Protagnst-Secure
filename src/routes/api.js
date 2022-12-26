@@ -36,16 +36,7 @@ class API extends Router {
         });
 
         this.router.get('/', async (req, res) => {
-            try {
-                let packageConf = require('../../package.json')
-                res.json({
-                    "message": "Welcome to the Protagnst-Secure API",
-                    "version": packageConf.version
-                });
-
-            } catch (e) {
-                console.log(e)
-            }
+            return res.json({ "message": "Protagnst-Secure API Loaded." });
         });
 
         this.router.get('/passport', (req, res) => {
