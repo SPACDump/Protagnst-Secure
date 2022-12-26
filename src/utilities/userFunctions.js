@@ -8,9 +8,25 @@ async function globalCheckHelper(discord_id) {
     return user[0];
 }
 
+async function checkUserPermissions(discord_id) {
+    let user = await globalCheckHelper(discord_id);
+    if (!user) return 0;
 
-    let userPermission = user[0].permission_level;
-    return userPermission;
+    return user.permission_level || 0;
 }
 
-module.exports = { checkUserPermissions };
+async function getUserMC(discord_id) {
+    let user = await globalCheckHelper(discord_id);
+    if (!user) return 0;
+    
+    return user.minecraft_name || "None";
+}
+
+async function getUserBanStatus(discord_id) {
+    let user = await globalCheckHelper(discord_id);
+    if (!user) return false;
+
+    return user.is_banned || false;
+}
+
+module.exports = { checkUserPermissions, getUserMC, getUserBanStatus };

@@ -12,7 +12,7 @@ const sessions = require('express-session');
 require('dotenv').config();
 const { makeConnection, executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { getFormById } = require('../utilities/formFunctions');
-const { checkUserPermissions } = require('../utilities/userFunctions');
+const { checkUserPermissions, getUserMC, getUserBanStatus } = require('../utilities/userFunctions');
 
 // start mysql connection
 makeConnection();
