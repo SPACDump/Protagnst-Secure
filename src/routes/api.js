@@ -7,8 +7,8 @@ const redirect = encodeURIComponent(`${process.env.HOSTNAME}/api/passport/callba
 const fetch = require('node-fetch-commonjs');
 const { getAvailableForms, getPreviousSubmissions, getOpenForms } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
-const { encrypt } = require('../utilities/aes');
-const { checkUserPermissions } = require('../utilities/userFunctions');
+const { encrypt, decrypt } = require('../utilities/aes');
+const { checkUserPermissions, refreshAccessToken, putUserInGuild } = require('../utilities/userFunctions');
 const { forceHome } = require('../..');
 
 function _encode(obj) {
@@ -155,7 +155,8 @@ class API extends Router {
 
             let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [req.params.submissionId]);
 
-            if (submission[0].discord_id != req.session.discordId) return res.json({ "error": "You are not allowed to view this submission" });
+            let userPerms = await checkUserPermissions(req.session.discordId);
+            if (submission[0].discord_id != req.session.discordId && userPerms < 3) return res.json({ "error": "You are not allowed to view this submission" });
 
             if (submission.length > 0) {
                 let combinedObj = {
@@ -217,13 +218,9 @@ class API extends Router {
             res.redirect('/');
         });
 
-        // getQuestions API route
         this.router.get('/getQuestions/:formId', async (req, res) => {
-            // check if user is logged in
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
-            // lock so only the server can use this endpoint
-            // @todo if needed, change this to req.query.authCode and then change that to an encoded version of the form name or id, whatever's easier.
             let isFromServer = req.query.f9d14b6cb97d;
             if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
 
@@ -231,6 +228,7 @@ class API extends Router {
                 let questions = await executeMysqlQuery('SELECT * FROM questions WHERE id = ?', [req.params.formId]);
                 res.json(questions);
             } catch (e) {
+                res.json({ error: true, message: "There was an error with the database query." })
                 console.log(e)
             }
         });
