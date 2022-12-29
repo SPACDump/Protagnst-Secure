@@ -157,7 +157,14 @@
         e.preventDefault();
         var form = $(this);
         var formId = getFormId();
+
+        var fields = form.find('[disabled]');
+        fields.prop('disabled', false);
+
         var formData = form.serializeArray();
+
+        fields.prop('disabled', true);
+
         var data = {};
         $(formData).each(function (index, obj) {
             data[obj.name] = obj.value;
