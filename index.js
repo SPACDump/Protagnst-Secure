@@ -14,3 +14,6 @@ const { validateLicenseKey } = require("./validateLicense.js");
         }, true);
     }
 })();
+
+let forceHome = [];
+module.exports = { forceHome };
