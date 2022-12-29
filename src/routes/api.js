@@ -385,6 +385,25 @@ class API extends Router {
             return res.json(forms);
         });
 
+        this.router.post('/dev/toggleFormVis', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'ixVu6veCBqpasc42') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let formData = await executeMysqlQuery(`SELECT * FROM forms WHERE id = ?`, [req.body.formid]);
+            if (!formData.length) return res.json({ "error": "Form not found" });
+
+            if (formData[0].is_hidden) {
+                await executeMysqlQuery(`UPDATE forms SET is_hidden = ? WHERE id = ?`, [0, req.body.formid]);
+                return res.json({ success: true, message: `Successfully marked ${formData[0].form_name} as shown!` });
+            } else {
+                forceHome.push(req.body.userid);
+                await executeMysqlQuery(`UPDATE forms SET is_hidden = ? WHERE id = ?`, [1, req.body.formid]);
+                return res.json({ success: true, message: `Successfully marked ${formData[0].form_name} as hidden!` });
+            }
+        });
+
         this.router.get('/getProfileById/:discordId', async (req, res) => {
             if (!req.session.discordId && !req.query.requestId) return res.json({ "error": "You are not logged in" });
 
