@@ -146,6 +146,82 @@
         }
     }
 
+    function handleSingleAccept() {
+        let url = new URL(window.location.href);
+        let submissionId = url.pathname.split('/').pop();
+
+        document.getElementById('btnAccept').disabled = true;
+        document.getElementById('btnDeny').disabled = true;
+
+        $.ajax({
+            url: '/api/admin/accept/' + submissionId,
+            type: 'POST',
+            data: { "ahM9WEXF79G": true, submissionId },
+
+            success: function (data) {
+                if (data.error) {
+                    document.getElementById('btnAccept').disabled = false;
+                    document.getElementById('btnDeny').disabled = false;
+
+                    let error = 'There was an error processing your request. Please try again later.';
+                    if (data.error) error = data.error;
+                    return showErrorToast('liveToast', error);
+                } else if (data.success) {
+                    let message = 'Submission ID #' + submissionId + ' accepted.';
+                    if (data.message) message = data.message;
+                    showSuccessToast('successToast', message);
+                    setTimeout(() => {
+                        window.location.href = '/admin/view';
+                    }, 2000);
+                }
+            },
+            error: function (data) {
+                document.getElementById('btnAccept').disabled = false;
+                document.getElementById('btnDeny').disabled = false;
+
+                return showErrorToast('liveToast', 'There was an error processing your request. Please try again later.');
+            }
+        });
+    };
+
+    function handleSingleDeny() {
+        let url = new URL(window.location.href);
+        let submissionId = url.pathname.split('/').pop();
+
+        document.getElementById('btnAccept').disabled = true;
+        document.getElementById('btnDeny').disabled = true;
+
+        $.ajax({
+            url: '/api/admin/deny/' + submissionId,
+            type: 'POST',
+            data: { "ahM9WEXF79G": true, submissionId },
+
+            success: function (data) {
+                if (data.error) {
+                    document.getElementById('btnAccept').disabled = false;
+                    document.getElementById('btnDeny').disabled = false;
+
+                    let error = 'There was an error processing your request. Please try again later.';
+                    if (data.error) error = data.error;
+                    return showErrorToast('liveToast', error);
+                } else if (data.success) {
+                    let message = 'Submission ID #' + submissionId + ' denied.';
+                    if (data.message) message = data.message;
+                    showSuccessToast('successToast', message);
+                    setTimeout(() => {
+                        window.location.href = '/admin/view';
+                    }, 2000);
+                }
+            },
+            error: function (data) {
+                document.getElementById('btnAccept').disabled = false;
+                document.getElementById('btnDeny').disabled = false;
+
+                return showErrorToast('liveToast', 'There was an error processing your request. Please try again later.');
+            }
+        });
+    };
+
     function renderQuestions(formId, subData) {
         $.ajax({
             url: `/api/getQuestions/${formId}`,
@@ -192,17 +268,28 @@
                     // append the div to the form
                     document.getElementsByTagName('form')[0].appendChild(newDiv);
                 }
-
-                // let submitButton = document.createElement('button');
-                // submitButton.type = 'submit';
-                // submitButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mt-3';
-                // submitButton.innerHTML = '<i class="fa-solid fa-check"></i> Submit';
-                // submitButton.id = 'btnSubmit';
-                // document.getElementsByTagName('form')[0].appendChild(submitButton);
             },
             error: function (data) {
-                console.log(data);
+                showErrorToast('liveToast', 'There was an error processing your request. Please try again later.');
             }
         });
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function showErrorToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+
+    function showSuccessToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
     }
 </script>
