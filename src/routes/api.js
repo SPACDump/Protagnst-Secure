@@ -504,6 +504,20 @@ class API extends Router {
             return res.json(await response.json());
         });
 
+        this.router.post('/user/setminecraft', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.body.SWAZg59PN7oS3;
+            if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let minecraftName = req.body.mcName;
+            if (!minecraftName) return res.json({ "error": "You did not provide a Minecraft name" });
+
+            await executeMysqlQuery(`UPDATE users SET minecraft_name = ? WHERE discord_id = ?`, [minecraftName, req.session.discordId]);
+            req.session.mcName = minecraftName;
+            return res.json({ success: true, message: `Your Minecraft name was successfully updated to ${minecraftName}` });
+        });
+
         this.router.use((req, res) => {
             res.status(404).json({
                 "error": "This API endpoint is invalid or has moved."
