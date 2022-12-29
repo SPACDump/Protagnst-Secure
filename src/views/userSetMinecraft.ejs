@@ -1,0 +1,167 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'User Settings' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-large">Settings</h1>
+            
+            <% if (session.mcName) { %>
+                <p class="text-secondary mb-2">View / Change your profile below<p>
+            <% } else { %>
+                <p class="text-secondary mb-2">You must set your Minecraft Username to continue.<p>
+            <% } %>
+
+            <% if (session.mcName != null) { %>
+                <p class="text-start mb-1 text-secondary">Your current Minecraft username</p>
+                
+                <% if (session.mcName) { %>
+                    <input type="text" class="form-control mb-3" placeholder="Minecraft Username" value="<%= session.mcName %>" disabled>
+                <% } else { %>
+                    <input type="text" class="form-control mb-3" placeholder="Minecraft Username" value="Not Linked" disabled>
+                <% } %>
+
+            <% } %>
+
+                        <form onSubmit="event.preventDefault(); return handleMCNameChange();">
+                            <div class="form-label-group">
+                                <p class="text-start mb-1 text-secondary">Your new Minecraft username <span
+                                        class="text-danger">*</span></p>
+                                <input type="text" id="newmcname" class="form-control mb-2" name="newmcname"
+                                    placeholder="What is your Minecraft IGN?" required>
+                            </div>
+
+                            <button class="btn btn-lg btn-primary text-white btn-block w-100" type="submit"
+                                id="btnSubmit">Set Username</button>
+                        </form>
+
+                        <% if (session.mcName != null) { %>
+                            <div id="btnToolbar" class="btn-toolbar mt-4 mb-1" style="justify-content: center; display: flex;">
+                                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go Back</button>
+                                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact Support</button>
+                            </div>
+
+                            <p class="mt-1 text-secondary text-center fs-6">
+                                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+                            </p>
+                        <% } %>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="liveToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    There was an error processing your request.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Welcome home.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+<script>
+    let href = '/settings';
+    let mcName = '<%= session.mcName %>'
+    $(document).ready(function () {
+        if (!mcName || mcName == null || mcName == undefined || mcName === 'null') href = '/';
+    });
+
+    async function handleMCNameChange() {
+        let mcName = $('#newmcname').val();
+        $('#btnSubmit').prop('disabled', true);
+
+        $.ajax({
+            url: `https://api.minetools.eu/uuid/${mcName}`,
+            type: "GET",
+            success: function (frData) {
+                if (frData.status != "OK") {
+                    $('#btnSubmit').prop('disabled', false);
+                    let error = "That is an invalid username.\n(Or Minetools is down)";
+
+                    showErrorToast('liveToast', error);
+                    return false;
+                }
+
+                $.ajax({
+                    url: "/api/user/setminecraft",
+                    type: "POST",
+                    data: {
+                        mcName: frData.name,
+                        SWAZg59PN7oS3: true
+                    },
+                    success: function (data) {
+                        if (data.error) {
+                            $('#btnSubmit').prop('disabled', false);
+                            let error = "There was an error processing your request.";
+                            if (data.error) error = data.error;
+
+                            showErrorToast('liveToast', error);
+                            return false;
+                        } else if (data.success) {
+                            showSuccessToast('successToast', data.message);
+                            
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 3000);
+                        } else {
+                            showErrorToast('liveToast', "There was an error processing your request.");
+                            return false;
+                        }
+                    },
+                    error: function (data) {
+                        showErrorToast('liveToast', "There was an error processing your request.");
+                        return false;
+                    }
+                });
+            },
+            error: function (data) {
+                showErrorToast('liveToast', "There was an error processing your request.");
+                return false;
+            }
+        });
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function showErrorToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+
+    function showSuccessToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
+        toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+</script>
+
+</html>
