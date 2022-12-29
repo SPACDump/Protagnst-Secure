@@ -290,6 +290,87 @@ class API extends Router {
             return res.send(csvRows.join('\n'));
         });
 
+        this.router.post('/admin/accept/:submissionArray', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.body.ahM9WEXF79G;
+            if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissionArray = req.params.submissionArray.split(',');
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            for (let i = 0; i < submissionArray.length; i++) {
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
+                if (!submission) continue;
+
+                let discordId = submission[0].discord_id;
+                let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [discordId]);
+                if (!userData) continue;
+
+                let refreshToken = decrypt(userData[0].refresh_token);
+                let accessToken = await refreshAccessToken(refreshToken, userData[0].discord_id);
+
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['accepted', submissionArray[i]]);
+
+                let roles = [];
+                roles.push(process.env.PARTICIPANT_ROLE_ID);
+
+                await putUserInGuild(accessToken, discordId, process.env.GUILD_ID, roles);
+                await sleep(1000);
+            };
+
+            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} been marked as accepted!\nSubmissions: ${submissionArray.join(", ")}` });
+        });
+
+        this.router.post('/admin/deny/:submissionArray', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.body.ahM9WEXF79G;
+            if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissionArray = req.params.submissionArray.split(',');
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            for (let i = 0; i < submissionArray.length; i++) {
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
+                if (!submission) continue;
+
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['denied', submissionArray[i]]);
+                await sleep(1200);
+            };
+
+            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} have been marked as denied!\nSubmissions: ${submissionArray.join(", ")}` });
+        });
+
+        this.router.post('/admin/pending/:submissionArray', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.body.ahM9WEXF79G;
+            if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let submissionArray = req.params.submissionArray.split(',');
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            for (let i = 0; i < submissionArray.length; i++) {
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
+                if (!submission) continue;
+
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['pending', submissionArray[i]]);
+                await sleep(1200);
+            };
+
+            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} have been marked as pending!\nSubmissions: ${submissionArray.join(", ")}` });
+        });
+
         this.router.post('/admin/toggleBanStatus', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
@@ -313,6 +394,7 @@ class API extends Router {
                 await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [0, discordData.id]);
                 return res.json({ success: true, message: `Successfully unbanned ${discordName}` });
             } else {
+                forceHome.push(req.body.userid);
                 await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [1, discordData.id]);
                 return res.json({ success: true, message: `Successfully banned ${discordName}` });
             }
