@@ -161,7 +161,7 @@ class App {
 
             let submissionId = req.params.submissionId;
             let subData = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionId]);
-            if (subData.length < 0) return res.redirect('/404');
+            if (subData.length <= 0) return res.redirect('/404');
 
             let userPerms = await checkUserPermissions(session.discordId);
             if (subData[0].discord_id != session.discordId && userPerms <= 2) return res.redirect('/403');
