@@ -105,6 +105,8 @@ class App {
                 return res.redirect('/ban');
             }
 
+            if (!session.mcName || session.mcName === null) return res.redirect('/settings/mc');
+
             return res.render('home.ejs', { session: session });
         });
 
