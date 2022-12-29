@@ -108,6 +108,13 @@
                         newInput.name = data[i].question_short;
                         newInput.required = true;
                         newInput.id = data[i].question_short;
+
+                        if(data[i].question_short.toLowerCase() === "mcign") {
+                            newInput.disabled = true;
+                            newInput.value = "<%- session.mcName %>";
+
+                            newLabel.innerHTML = 'Your Minecraft IGN. <a class="text-decoration-none" href="/settings" target="_blank" rel="noopener noreferrer">Not you? <i class="fa-solid fa-arrow-up-right-from-square"></i></a>';
+                        }
                     }
 
                     // append the label and input to the div
