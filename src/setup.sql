@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   `submission_id` int NOT NULL AUTO_INCREMENT,
   `form_id` int NOT NULL,
   `submitted_at` int NOT NULL,
-  `form_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `form_data` text CHARACTER SET utf8mb4 NOT NULL,
   `outcome` varchar(10) NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`submission_id`,`discord_id`) USING BTREE,
   KEY `form_id` (`form_id`),
@@ -64,9 +64,9 @@ CREATE TABLE IF NOT EXISTS `submissions` (
 
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `discord_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
-  `minecraft_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `refresh_token` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
+  `discord_id` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `minecraft_name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `refresh_token` varchar(60) CHARACTER SET utf8mb4 NOT NULL DEFAULT '0',
   `permission_level` int NOT NULL DEFAULT '1',
   `is_banned` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`discord_id`)
