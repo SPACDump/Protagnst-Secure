@@ -83,6 +83,20 @@ a.alt {
     background-position: center
 }
 
+.fancy-header-very-small {
+    font-family: Montserrat, sans-serif;
+    font-size: calc(0.5em + 2.5vw);
+    margin: 0;
+    font-weight: 900;
+    background: url(../static/gradient.jpg) no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: cover;
+    background-position: center
+}
+
+
 .fancy-header {
     font-family: Montserrat, sans-serif;
     font-size: calc(2em + 2.5vw);
