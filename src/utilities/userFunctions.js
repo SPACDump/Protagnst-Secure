@@ -17,7 +17,7 @@ async function checkUserPermissions(discord_id) {
 
 async function getUserMC(discord_id) {
     let user = await globalCheckHelper(discord_id);
-    if (!user) return 0;
+    if (!user) return "None";
     
     return user.minecraft_name || "None";
 }
