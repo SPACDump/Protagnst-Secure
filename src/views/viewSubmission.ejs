@@ -13,12 +13,17 @@
 
             <form></form>
 
-            <p id="staffToolsText"></p>
-            <div id="btnToolbar" class="btn-toolbar" style="justify-content: center; display: flex;"></div>
-            
-            <p class="mt-3 mb-3 text-secondary text-center fs-6">
-            <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3" onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go back</button>
-            &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            <div id="stafftools"></div>
+
+            <div id="btnToolbar" class="btn-toolbar mt-4 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact Support</button>
+            </div>
+
+            <p class="mt-1 text-secondary text-center fs-6">
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
             </p>
         </div>
     </div>
@@ -37,6 +42,19 @@
         </div>
     </div>
 
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Welcome home.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <%- include('components/loader') %>
 </body>
 
@@ -48,7 +66,7 @@
         let hostname = url.origin;
 
         let submissionId = '<%= submissionId %>';
-        
+
         let subData = await fetch(`${hostname}/api/getSubmission/${submissionId}?isFromServer=f1424090948c`, {
             method: 'GET',
             headers: {
@@ -74,27 +92,57 @@
         });
 
         if (data.permission_level > 2) {
-            let btnToolbar = document.getElementById('btnToolbar');
-            let staffToolsText = document.getElementById('staffToolsText');
+            // let btnToolbar = document.getElementById('btnToolbar');
+            // let staffToolsText = document.getElementById('staffToolsText');
 
-            staffToolsText.innerHTML = '<b>Staff Tools:</b>';
+            // staffToolsText.innerHTML = '<b>Staff Tools:</b>';
+
+            // let btnAccept = document.createElement('button');
+            // btnAccept.type = 'button';
+            // btnAccept.id = 'btnAccept';
+            // btnAccept.className = 'btn btn-success btn-md me-1';
+            // btnAccept.innerHTML = '<i class="fa-solid fa-check"></i> Accept';
+            // btnAccept.onclick = () => handleSingleAccept();
+
+            // let btnDeny = document.createElement('button');
+            // btnDeny.type = 'button';
+            // btnDeny.id = 'btnDeny';
+            // btnDeny.className = 'btn btn-danger btn-md me-1';
+            // btnDeny.innerHTML = '<i class="fa-solid fa-times"></i> Deny';
+            // btnDeny.onclick = () => handleSingleDeny();
+
+            // btnToolbar.appendChild(btnAccept);
+            // btnToolbar.appendChild(btnDeny);
+
+            let staffTools = document.getElementById('stafftools');
+
+            let staffAlertBox = document.createElement('div');
+            staffAlertBox.className = 'alert alert-dark';
+            staffAlertBox.role = 'alert';
+            
+            let staffAlertBoxText = document.createElement('p');
+            staffAlertBoxText.className = 'mb-0';
+            staffAlertBoxText.innerHTML = '<b>Staff Tools:</b>';
 
             let btnAccept = document.createElement('button');
             btnAccept.type = 'button';
             btnAccept.id = 'btnAccept';
-            btnAccept.className = 'btn btn-success btn-md me-2';
+            btnAccept.className = 'btn btn-success btn-md me-1';
             btnAccept.innerHTML = '<i class="fa-solid fa-check"></i> Accept';
-            btnAccept.onclick = () => window.location.href = `/api/admin/accept/${subData.submission.form_id}`;
+            btnAccept.onclick = () => handleSingleAccept();
 
             let btnDeny = document.createElement('button');
             btnDeny.type = 'button';
             btnDeny.id = 'btnDeny';
-            btnDeny.className = 'btn btn-danger btn-md me-2';
+            btnDeny.className = 'btn btn-danger btn-md me-1';
             btnDeny.innerHTML = '<i class="fa-solid fa-times"></i> Deny';
-            btnDeny.onclick = () => window.location.href = `/api/admin/deny/${subData.submission.form_id}`;
+            btnDeny.onclick = () => handleSingleDeny();
 
-            btnToolbar.appendChild(btnAccept);
-            btnToolbar.appendChild(btnDeny);
+            staffAlertBox.appendChild(staffAlertBoxText);
+            staffAlertBox.appendChild(btnAccept);
+            staffAlertBox.appendChild(btnDeny);
+
+            staffTools.appendChild(staffAlertBox);
         }
     }
 

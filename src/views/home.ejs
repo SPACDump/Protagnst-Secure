@@ -9,12 +9,12 @@
     <div id="error">
         <div class="error err-fix">
             <h1 class="fancy-header">My Panel</h1>
-            <p class="text-secondary mb-5">Welcome back, <%- session.userTag %>!</p>
+            <p class="text-secondary mb-4">Welcome back, <%- session.userTag %>!</p>
 
             <div>
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-2"
                     onclick="window.location.href = '/new';"><i class="fa-solid fa-pen-nib"></i> Applications</button>
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
+                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-2"
                     onclick="window.location.href = '/my';">
                     <i class="fa-solid fa-eye"></i> View my submissions</button>
                 <button class="btn btn-lg btn-danger text-white btn-block w-100"
@@ -22,12 +22,16 @@
                     Logout</button>
             </div>
 
-            <div id="btnToolbar" class="btn-toolbar mt-5 mb-3" style="justify-content: center; display: flex;">
+            <div id="btnToolbar" class="btn-toolbar mt-3 mb-2" style="justify-content: center; display: flex;">
                 <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
                     onclick="window.location.href = '/transparency';"><i class="fa-solid fa-info"></i> Data
                     Transparency</button>
                 <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
                     onclick="window.location.href = '/credits';"><i class="fa-solid fa-scroll"></i> Credits</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i></button>
+                <button type="button" id="btnSubmit" class="btn btn-secondary btn-md me-2"
+                    onclick="window.location.href = '/settings';"><i class="fa-solid fa-cog"></i></button>
             </div>
 
             &copy; Protagnst Media LLC / Blaze Productions LLC 2022
@@ -74,7 +78,7 @@
         if (userPermLevel > 2) {
             let submitButton = document.createElement('button');
             submitButton.className = 'btn btn-info text-white btn-md me-2';
-            submitButton.innerHTML = '<i class="fa-solid fa-star"></i> Admin Panel';
+            submitButton.innerHTML = '<i class="fa-solid fa-star"></i>';
             submitButton.onclick = () => window.location.href = '/admin';
 
             $("#btnToolbar").append(submitButton);

@@ -9,7 +9,7 @@
     <div id="error">
         <div class="error err-fix">
             <h1 class="fancy-header-large">Credits</h1>
-            <p class="text-secondary mb-5">The masterminds behind the app.
+            <p class="text-secondary mb-3">The masterminds behind the app.
             <p>
 
             <p class="text-secondary">
@@ -17,7 +17,7 @@
                 <b>In collaboration with:</b> Blaze Productions LLC<br />
             <p>
 
-            <div id="recieved-data" class="mt-2 mb-5">
+            <div id="recieved-data" class="mt-2 mb-4">
                 <table class="table table-dark">
                     <thead>
                         <tr>
@@ -38,10 +38,14 @@
                 </table>
             </div>
 
-            <p class="mt-5 mb-3 text-secondary text-center fs-6">
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
-                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
-                    Go back</button>
+            <div id="btnToolbar" class="btn-toolbar mt-1 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact Support</button>
+            </div>
+
+            <p class="mt-1 text-secondary text-center fs-6">
                 &copy; Protagnst Media LLC / Blaze Productions LLC 2022
             </p>
         </div>

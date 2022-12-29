@@ -20,11 +20,15 @@
 
             <div id="hereTheFormsGo" class="mb-2"></div>
 
+            <div id="btnToolbar" class="btn-toolbar mt-4 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact Support</button>
+            </div>
+
             <p class="mb-1 text-secondary text-center fs-6">
-                <button class="btn btn-lg btn-primary text-white btn-block w-100 mb-3"
-                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
-                    Go back</button>
-            &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
             </p>
         </div>
     </div>
@@ -83,7 +87,7 @@
                             let discordName = discordProfile.username + '#' + discordProfile.discriminator;
 
                             let formButton = document.createElement('button');
-                            formButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mb-2';
+                            formButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mb-1';
                             formButton.innerHTML = `<i class="fa-solid fa-file-alt"></i> ${discordName ?? `Unknown`} - ${formData.form.form_name}`;
                             formButton.onclick = () => window.location.href = `/view/${data[i].submission_id}`;
 
