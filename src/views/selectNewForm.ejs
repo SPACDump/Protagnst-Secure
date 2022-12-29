@@ -81,7 +81,6 @@
                 let formMaxResponses = form.max_responses;
 
                 let currentResponses = await fetch(`/api/currentResponses/${form.id}?isFromServer=fdd04d8ca52b`).then((res) => res.json());
-                console.log(currentResponses);
 
                 let button = document.createElement("button");
                 button.innerHTML = data[i].form_name;
@@ -95,7 +94,6 @@
                 document.getElementById("hereTheFormsGo").appendChild(button);
             }
         }).catch(err => {
-            console.log(err);
             var toast = new bootstrap.Toast(document.getElementById('liveToast'))
             toast.show()
         });
