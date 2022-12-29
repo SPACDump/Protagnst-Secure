@@ -120,7 +120,7 @@ class App {
 
             switch (errorCode) {
                 case "deprecated": { reason = "This page isn't really used anymore."; break; };
-                default: { reason = "An unknown error ocurred"; break; };
+                default: { reason = "An unknown error occurred."; break; };
             }
 
             return res.render('dataError.ejs', { errorReason: reason })
