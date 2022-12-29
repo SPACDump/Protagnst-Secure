@@ -252,6 +252,16 @@ class App {
             else return res.redirect('/403');
         });
 
+        this.app.get('/admin/update', async (req, res) => {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPermission = await checkUserPermissions(req.session.discordId);
+
+            if (userPermission > 2) return res.render('adminBulkUpdate.ejs', { session: req.session });
+            else return res.redirect('/403');
+        });
+
         this.app.get('/developer', async (req, res) => {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
