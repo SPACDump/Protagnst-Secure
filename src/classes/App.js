@@ -13,6 +13,7 @@ require('dotenv').config();
 const { makeConnection, executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { getFormById } = require('../utilities/formFunctions');
 const { checkUserPermissions, getUserMC, getUserBanStatus } = require('../utilities/userFunctions');
+const { forceHome } = require('../..');
 
 // start mysql connection
 makeConnection();
@@ -22,7 +23,7 @@ let accessLogStream = rfs.createStream('access.log', {
     size: '20M', // rotate when file size exceeds 20 MegaBytes
     compress: "gzip", // compress rotated files
     path: path.join(__dirname, '../..', 'logs/access')
-})
+});
 
 class App {
     io;
@@ -69,6 +70,11 @@ class App {
         }
 
         this.app.use(function (req, res, next) {
+            if (forceHome.includes(req.session.discordId)) {
+                forceHome.splice(forceHome.indexOf(req.session.discordId), 1);
+                return res.redirect('/');
+            };
+
             if (req.session.isBanned === true) {
                 let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
                 if (allowedPages.includes(req.path)) return next();

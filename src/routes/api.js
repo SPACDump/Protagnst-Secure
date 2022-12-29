@@ -9,6 +9,7 @@ const { getAvailableForms, getPreviousSubmissions, getOpenForms } = require('../
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { encrypt } = require('../utilities/aes');
 const { checkUserPermissions } = require('../utilities/userFunctions');
+const { forceHome } = require('../..');
 
 function _encode(obj) {
     let string = "";
@@ -27,6 +28,11 @@ class API extends Router {
     }
     createRoute() {
         this.router.use(function (req, res, next) {
+            if (forceHome.includes(req.session.discordId)) {
+                forceHome.splice(forceHome.indexOf(req.session.discordId), 1);
+                return res.redirect('/');
+            };
+
             if (req.session.isBanned === true) {
                 let allowedPages = ['/logout']; // they are not allowed to access the API
                 if (allowedPages.includes(req.path)) next();
