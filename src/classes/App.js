@@ -145,6 +145,16 @@ class App {
             return res.render('selectAvailableSubmission.ejs', { session: req.session });
         });
 
+        this.app.get('/settings', async function (req, res) {
+            if (!req.session.discordId) return res.redirect('/auth');
+            return res.render('userSettings.ejs', { session: req.session });
+        });
+
+        this.app.get('/settings/mc', async function (req, res) {
+            if (!req.session.discordId) return res.redirect('/auth');
+            return res.render('userSetMinecraft.ejs', { session: req.session });
+        });
+
         this.app.get('/view/:submissionId', async function (req, res) {
             let session = req.session;
             if (!session.discordId) return res.redirect('/auth');
