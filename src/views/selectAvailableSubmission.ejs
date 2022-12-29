@@ -57,8 +57,19 @@
             }
         }).then(res => res.json()).then(async data => {
             if (data.message) {
-                return document.getElementById('hereTheFormsGo').innerHTML = data.message;
+                let newElement = document.createElement("div");
+                newElement.setAttribute("class", "alert alert-danger");
+                newElement.setAttribute("role", "alert");
+
+                let newElementP = document.createElement("p");
+                newElementP.setAttribute("class", "mb-0");
+                newElementP.innerHTML = data.message;
+                
+                newElement.appendChild(newElementP);
+
+                return document.getElementById("hereTheFormsGo").appendChild(newElement);
             };
+            
             for (let i = 0; i < data.length; i++) {
                 let button = document.createElement("button");
                 let formName = "";
@@ -82,7 +93,6 @@
                 document.getElementById("hereTheFormsGo").appendChild(button);
             }
         }).catch(err => {
-            console.log(err);
             var toast = new bootstrap.Toast(document.getElementById('liveToast'))
             toast.show()
         });
