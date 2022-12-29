@@ -330,7 +330,7 @@ class App {
     }
 
     async listen(fn) {
-        this.server.listen(process.env.EXPRESS_PORT, fn)
+        this.server.listen(process.env.EXPRESS_PORT, process.env.EXPRESS_IP, fn)
     }
 }
 

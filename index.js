@@ -10,7 +10,7 @@ const { validateLicenseKey } = require("./validateLicense.js");
 
         await Client.registerRoutes();
         await Client.listen(() => {
-            Logger.info(`Server listening on port ${process.env.EXPRESS_PORT}`);
+            Logger.info(`Server listening on ${process.env.EXPRESS_IP}:${process.env.EXPRESS_PORT}`);
         }, true);
     }
 })();
