@@ -133,7 +133,7 @@
                 document.getElementsByTagName('form')[0].appendChild(submitButton);
             },
             error: function (data) {
-                console.log(data);
+                showErrorToast('liveToast', 'There was an error processing your request. Please try again later.');
             }
         });
     }
