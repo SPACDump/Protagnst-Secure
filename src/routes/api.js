@@ -349,7 +349,7 @@ class API extends Router {
                 await sleep(1200);
             };
 
-            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} have been marked as denied!\nSubmissions: ${submissionArray.join(", ")}` });
+            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} been marked as denied!\nSubmissions: ${submissionArray.join(", ")}` });
         });
 
         this.router.post('/admin/pending/:submissionArray', async (req, res) => {
@@ -374,7 +374,7 @@ class API extends Router {
                 await sleep(1200);
             };
 
-            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} have been marked as pending!\nSubmissions: ${submissionArray.join(", ")}` });
+            return res.json({ success: true, message: `${submissionArray.length} submission${submissionArray.length > 1 ? `s have` : ` has`} been marked as pending!\nSubmissions: ${submissionArray.join(", ")}` });
         });
 
         this.router.post('/admin/toggleBanStatus', async (req, res) => {
