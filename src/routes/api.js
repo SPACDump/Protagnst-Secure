@@ -297,6 +297,8 @@ class API extends Router {
             if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
 
             let submissionArray = req.params.submissionArray.split(',');
+            submissionArray = submissionArray.filter((item, index) => submissionArray.indexOf(item) === index);
+            submissionArray.sort((a, b) => a - b);
 
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
@@ -332,6 +334,8 @@ class API extends Router {
             if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
 
             let submissionArray = req.params.submissionArray.split(',');
+            submissionArray = submissionArray.filter((item, index) => submissionArray.indexOf(item) === index);
+            submissionArray.sort((a, b) => a - b);
 
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
@@ -355,6 +359,8 @@ class API extends Router {
             if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
 
             let submissionArray = req.params.submissionArray.split(',');
+            submissionArray = submissionArray.filter((item, index) => submissionArray.indexOf(item) === index);
+            submissionArray.sort((a, b) => a - b);
 
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
