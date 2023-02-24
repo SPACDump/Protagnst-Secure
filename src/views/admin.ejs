@@ -59,12 +59,12 @@
         userPermLevel = userPerms.permission_level;
 
         if (userPermLevel >= 5) {
-            let button = document.createElement("button");
-            button.innerHTML = '<i class="fa-solid fa-gavel"></i> Ban user';
-            button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
-            button.setAttribute("onclick", "window.location.href = '/admin/ban';");
+            let banButton = document.createElement("button");
+            banButton.innerHTML = '<i class="fa-solid fa-gavel"></i> Ban user';
+            banButton.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
+            banButton.setAttribute("onclick", "window.location.href = '/admin/ban';");
 
-            document.getElementById("lg-buttons").appendChild(button);
+            $("#lg-buttons").append(button);
         }
 
         if (userPermLevel >= 50) {
