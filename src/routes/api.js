@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const redirect = encodeURIComponent(`${process.env.HOSTNAME}/api/passport/callback`);
 
 const fetch = require('node-fetch-commonjs');
-const { getAvailableForms, getPreviousSubmissions, getOpenForms } = require('../utilities/formFunctions');
+const { getAvailableForms, getPreviousSubmissions, getOpenForms, getFormById } = require('../utilities/formFunctions');
 const { executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { encrypt, decrypt } = require('../utilities/aes');
 const { checkUserPermissions, refreshAccessToken, putUserInGuild } = require('../utilities/userFunctions');
@@ -270,6 +270,62 @@ class API extends Router {
             }
         });
 
+        this.router.get('/admin/getFormStats/:formId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            // get form info to make sure it's active & exists
+            let formData = await getFormById(req.params.formId);
+            if (!formData) return res.json({ "error": "Form not found" });
+
+            let formId = req.params.formId;
+            let sql = `SELECT COUNT(*) as current_responses, max_responses FROM forms LEFT JOIN submissions ON forms.id = submissions.form_id WHERE forms.id = ${formId} GROUP BY forms.id;`;
+ 
+            let submissions = await executeMysqlQuery(sql);
+            if (submissions.length > 1) return res.json({ "error": "Too many submissions found" });
+            else if (submissions.length < 1) return res.json({ "error": "No submissions found" });
+
+            let currentResponses = submissions[0].current_responses;
+            let maxResponses = submissions[0].max_responses;
+            let latestResponse = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ? ORDER BY submitted_at DESC LIMIT 1`, [formId]);
+
+            let response = {
+                "success": true,
+                "current_responses": currentResponses,
+                "max_responses": maxResponses == -1 ? "∞" : maxResponses
+            }
+
+            // if last response exists, add it to the response
+            if (latestResponse.length > 0) {
+                response.newest_response = latestResponse[0].submitted_at;
+                response.newest_response_user = latestResponse[0].discord_id;
+                response.newest_response_outcome = latestResponse[0].outcome;
+            }
+
+            return res.json(response);
+        });
+
+        this.router.get('/admin/allFormStats', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let sql = `SELECT COUNT(submissions.form_id) AS current_responses, forms.max_responses, forms.id AS form_id FROM forms LEFT JOIN submissions ON forms.id = submissions.form_id GROUP BY forms.id;`;
+
+            let submissions = await executeMysqlQuery(sql);
+            if (submissions.length < 1) return res.json({ "error": "No submissions found" });
+
+            let response = {
+                "success": true,
+                "forms": submissions
+            };
+
+            return res.json(response);
+        });
+
         this.router.get('/admin/export/:formId', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
@@ -459,7 +515,7 @@ class API extends Router {
             let questionData = req.body.questionData;
 
             let nfData = await executeMysqlQuery(`INSERT INTO questions (id, question, question_short, question_type, question_data) VALUES (?, ?, ?, ?, ?)`, [formId, questionText, questionShort, questionType, questionData]);
-            
+
             return res.json({ success: true, message: `A new question was successfully created.\nForm ID: ${formId}\nQuestion ID: ${nfData.insertId}` });
         });
 
