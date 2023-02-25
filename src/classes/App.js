@@ -176,6 +176,46 @@ class App {
             });
         });
 
+        this.app.get('/stats', async function (req, res) {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPerms = await checkUserPermissions(session.discordId);
+            if (userPerms <= 2) return res.redirect('/403');
+
+            return res.render('formStatsAll.ejs', { session: req.session });
+        });
+
+        this.app.get('/stats/select', async function (req, res) {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPerms = await checkUserPermissions(session.discordId);
+            if (userPerms <= 2) return res.redirect('/403');
+
+            return res.render('formStatsSelect.ejs', {
+                session: req.session
+            });
+        });
+
+        this.app.get('/stats/:formId', async function (req, res) {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let formId = req.params.formId;
+            let formData = await getFormById(formId);
+            if (!formData) return res.redirect('/404');
+
+            let userPerms = await checkUserPermissions(session.discordId);
+            if (userPerms <= 2) return res.redirect('/403');
+
+            return res.render('formStats.ejs', {
+                session: req.session,
+                formId: formId,
+                data: formData
+            });
+        });
+
         this.app.get('/fill/:formId', async (req, res) => {
             // check if user has already applied for this form
             let formId = req.params.formId;
