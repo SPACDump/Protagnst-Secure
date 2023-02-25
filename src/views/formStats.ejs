@@ -1,0 +1,167 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Form Stats' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Form Statistics</h1>
+            <p class="text-secondary mb-3">View graphs & stats from this form below</p>
+
+            <div id="formStats">
+                <div id="loadingAlert" class="alert alert-primary" role="alert">
+                    <p class="mb-0">Loading...</p>
+                </div>
+            </div>
+
+            <div id="btnToolbar" class="btn-toolbar mt-2 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact
+                    Support</button>
+            </div>
+
+            <p class="mb-1 text-secondary text-center fs-6">
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    $(document).ready(async function () {
+        let formId = "<%- formId %>";
+
+        let formStats = await fetch(`/api/admin/getFormStats/${formId}?isFromServer=37c14b8a8b98`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        let data = await formStats.json();
+
+        let nru = data.newest_response_user;
+        if (nru) {
+            let discordProfile = await fetch(`/api/getProfileById/${nru}?isFromServer=c2f64dea9444`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            let discordProfileData = await discordProfile.json();
+            nru = `${discordProfileData.username}#${discordProfileData.discriminator}`;
+        }
+
+        if (data.success) {
+            let table = document.createElement("table");
+            table.setAttribute("class", "table table-dark")
+
+            let tableBody = document.createElement("tbody");
+
+            let formIdRow = document.createElement("tr");
+            let formIdLabelTd = document.createElement("td");
+            formIdLabelTd.innerHTML = "Form ID";
+            let formIdValueTd = document.createElement("td");
+            formIdValueTd.innerHTML = formId;
+            formIdRow.appendChild(formIdLabelTd);
+            formIdRow.appendChild(formIdValueTd);
+
+            let currentResponsesRow = document.createElement("tr");
+            let currentResponsesLabelTd = document.createElement("td");
+            currentResponsesLabelTd.innerHTML = "Current Responses";
+            let currentResponsesValueTd = document.createElement("td");
+            currentResponsesValueTd.innerHTML = `${data.current_responses} / ${data.max_responses}`;
+            currentResponsesRow.appendChild(currentResponsesLabelTd);
+            currentResponsesRow.appendChild(currentResponsesValueTd);
+
+            tableBody.appendChild(formIdRow);
+            tableBody.appendChild(currentResponsesRow);
+            table.appendChild(tableBody);
+
+            if (nru) {
+                let emptyRow = document.createElement("tr");
+                let emptyRowLabel = document.createElement("td");
+                emptyRowLabel.innerHTML = "\u200b";
+                let emptyRowV = document.createElement("td");
+                emptyRowV.innerHTML = `\u200b`;
+                emptyRow.appendChild(emptyRowLabel);
+                emptyRow.appendChild(emptyRowV);
+                tableBody.appendChild(emptyRow);
+
+                let newestResponseIdRow = document.createElement("tr");
+                let newestResponseIdLabelTd = document.createElement("td");
+                newestResponseIdLabelTd.innerHTML = "Newest Response ID";
+                let newestResponseIdValueTd = document.createElement("td");
+                newestResponseIdValueTd.innerHTML = nru ?? "No response available";
+                newestResponseIdRow.appendChild(newestResponseIdLabelTd);
+                newestResponseIdRow.appendChild(newestResponseIdValueTd);
+                tableBody.appendChild(newestResponseIdRow);
+            }
+
+            if (data.newest_response) {
+                let newestResponseSubmittedAtRow = document.createElement("tr");
+                let newestResponseSubmittedAtLabelTd = document.createElement("td");
+                newestResponseSubmittedAtLabelTd.innerHTML = "Newest Response Submitted At";
+                let newestResponseSubmittedAtValueTd = document.createElement("td");
+                newestResponseSubmittedAtValueTd.innerHTML = unixTimeToString(data.newest_response) ?? "No response available";
+                newestResponseSubmittedAtRow.appendChild(newestResponseSubmittedAtLabelTd);
+                newestResponseSubmittedAtRow.appendChild(newestResponseSubmittedAtValueTd);
+                tableBody.appendChild(newestResponseSubmittedAtRow);
+            }
+
+            if (data.newest_response_outcome) {
+                let newestResponseOutcomeRow = document.createElement("tr");
+                let newestResponseOutcomeLabelTd = document.createElement("td");
+                newestResponseOutcomeLabelTd.innerHTML = "Newest Response Outcome";
+                let newestResponseOutcomeValueTd = document.createElement("td");
+                newestResponseOutcomeValueTd.innerHTML = capitalizeFirstLetter(data.newest_response_outcome) ?? "No response available";
+                newestResponseOutcomeRow.appendChild(newestResponseOutcomeLabelTd);
+                newestResponseOutcomeRow.appendChild(newestResponseOutcomeValueTd);
+                tableBody.appendChild(newestResponseOutcomeRow);
+            }
+
+            document.getElementById("loadingAlert").remove();
+            return document.getElementById("formStats").appendChild(table);
+        } else {
+            let newElement = document.createElement("div");
+            newElement.setAttribute("class", "alert alert-danger");
+            newElement.setAttribute("role", "alert");
+
+            let newElementP = document.createElement("p");
+            newElementP.setAttribute("class", "mb-0");
+            newElementP.innerHTML = `${data.error}`;
+
+            newElement.appendChild(newElementP);
+
+            document.getElementById("loadingAlert").remove();
+            return document.getElementById("formStats").appendChild(newElement);
+        }
+    });
+
+    function unixTimeToString(unixTime) {
+        const date = new Date(unixTime * 1000);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
+        const second = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    }
+
+    function capitalizeFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+</script>
