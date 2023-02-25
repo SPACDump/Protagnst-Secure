@@ -21,6 +21,16 @@
                     Update</button>
             </div>
 
+            <div id="statsToolbar">
+                <div class="btn-toolbar mb-3" style="justify-content: center; display: flex;">
+                    <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                        onclick="window.location.href = '/stats';"><i class="fa-solid fa-star"></i>
+                        Stats: All Forms</button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                        onclick="window.location.href = '/stats/select';"><i class="fa-solid fa-scroll"></i> Stats: Specific Form</button>
+                </div>
+            </div>
+
             <div id="btnToolbar" class="btn-toolbar mt-3 mb-1" style="justify-content: center; display: flex;">
                 <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
                     onclick="window.location.href = '/';"><i class="fa-solid fa-house"></i> Go Home</button>
@@ -64,7 +74,7 @@
             banButton.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
             banButton.setAttribute("onclick", "window.location.href = '/admin/ban';");
 
-            $("#lg-buttons").append(button);
+            $("#lg-buttons").append(banButton);
         }
 
         if (userPermLevel >= 50) {
