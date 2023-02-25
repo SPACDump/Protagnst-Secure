@@ -1,0 +1,105 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Form Stats' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">All Form Statistics</h1>
+            <p class="text-secondary mb-3">View graphs & stats from all forms below</p>
+
+            <div id="formStats">
+                <div id="loadingAlert" class="alert alert-primary" role="alert">
+                    <p class="mb-0">Loading...</p>
+                </div>
+            </div>
+
+            <div id="btnToolbar" class="btn-toolbar mt-2 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact
+                    Support</button>
+            </div>
+
+            <p class="mb-1 text-secondary text-center fs-6">
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+</html>
+
+<script>
+    $(document).ready(async function () {
+        let formStats = await fetch(`/api/admin/allFormStats?isFromServer=37c14b8a8b98`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        let data = await formStats.json();
+
+        if (data.success) {
+            let table = document.createElement("table");
+            table.setAttribute("class", "table table-dark")
+
+            let tableHead = document.createElement("thead");
+            let tableBody = document.createElement("tbody");
+            let tableBodyRow = document.createElement("tr");
+
+            data.forms.forEach((form) => {
+                let tableBodyRow = document.createElement("tr");
+
+                let tableBodyRowTd1 = document.createElement("td");
+                tableBodyRowTd1.innerHTML = form.form_id;
+
+                let tableBodyRowTd2 = document.createElement("td");
+                tableBodyRowTd2.innerHTML = `${form.current_responses} / ${form.max_responses == "-1" ? "∞" : form.max_responses}`;
+
+                tableBodyRow.appendChild(tableBodyRowTd1);
+                tableBodyRow.appendChild(tableBodyRowTd2);
+
+                tableBody.appendChild(tableBodyRow);
+            });
+
+            let tableHeadRow = document.createElement("tr");
+            let tableHeadRowTh1 = document.createElement("th");
+            tableHeadRowTh1.innerHTML = "Form ID";
+            let tableHeadRowTh2 = document.createElement("th");
+            tableHeadRowTh2.innerHTML = "Response Count";
+
+            tableHeadRow.appendChild(tableHeadRowTh1);
+            tableHeadRow.appendChild(tableHeadRowTh2);
+            tableHead.appendChild(tableHeadRow);
+            table.appendChild(tableHead);
+            table.appendChild(tableBody);
+
+            document.getElementById("loadingAlert").remove();
+            return document.getElementById("formStats").appendChild(table);
+        }
+
+        if (data.error) {
+            let newElement = document.createElement("div");
+            newElement.setAttribute("class", "alert alert-danger");
+            newElement.setAttribute("role", "alert");
+
+            let newElementP = document.createElement("p");
+            newElementP.setAttribute("class", "mb-0");
+            newElementP.innerHTML = `${data.error}`;
+
+            newElement.appendChild(newElementP);
+
+            document.getElementById("loadingAlert").remove();
+            return document.getElementById("formStats").appendChild(newElement);
+        }
+    });
+</script>
