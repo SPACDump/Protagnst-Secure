@@ -90,7 +90,7 @@
         }).then((res) => res.json())
 
         dat.forEach(function (form) {
-            $('#formid').append(`<option value="${form.id}">#${form.id}: ${form.form_name}</option>`);
+            $('#formid').append(`<option value="${form.id}">#${form.id}: ${form.name}</option>`);
         });
     });
 

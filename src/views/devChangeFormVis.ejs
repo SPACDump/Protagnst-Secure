@@ -70,7 +70,7 @@
         }).then((res) => res.json())
 
         dat.forEach(function (form) {
-            $('#formid').append(`<option value="${form.id}">#${form.id}: ${form.form_name} (Currently ${form.is_hidden == '0' ? `visible` : `hidden`})</option>`);
+            $('#formid').append(`<option value="${form.id}">#${form.id}: ${form.name} (Currently ${form.is_hidden == '0' ? `visible` : `hidden`})</option>`);
         });
     });
 

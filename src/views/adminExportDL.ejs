@@ -102,12 +102,12 @@
         }).then(res => res.json()).then(data => formData = data);
         
         let headers = {};
-        headers['submission_id'] = 'Submission ID';
-        headers['discord_id'] = 'Discord ID';
+        headers['id'] = 'Submission ID';
+        headers['uid'] = 'User ID';
         formData.questions.forEach(question => {
             let data = question.question;
             data = data.replace(/,/g, '');
-            headers[question.question_short] = data;
+            headers[question.short_id] = data;
         });
 
         let responses;
@@ -120,11 +120,11 @@
 
         let itemsFormatted = [];
         responses.forEach(response => {
-            let parsedFormData = JSON.parse(response.form_data);
+            let parsedFormData = JSON.parse(response.data);
             
             let mappedFormData = {};
-            mappedFormData[headers['submission_id']] = response.submission_id;
-            mappedFormData[headers['discord_id']] = response.discord_id;
+            mappedFormData[headers['id']] = response.id;
+            mappedFormData[headers['uid']] = response.user_id;
 
             for (let key in parsedFormData) {
                 let data = parsedFormData[key];

@@ -4,9 +4,9 @@ async function getAvailableForms(req) {
     if (!req.session.discordId) return false;
 
     let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
-    let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+    let user = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.session.discordId]);
 
-    let userPermission = user[0].permission_level;
+    let userPermission = user[0].perms;
 
     for (let i = 0; i < formsArray.length; i++) {
         if (formsArray[i].permissions_needed > userPermission) {
@@ -15,7 +15,10 @@ async function getAvailableForms(req) {
         }
     };
 
-    let submittedForms = await executeMysqlQuery(`SELECT form_id FROM submissions WHERE discord_id = ?`, [req.session.discordId]);
+    // get user id
+    let userID = user[0].id;
+
+    let submittedForms = await executeMysqlQuery(`SELECT form_id FROM submissions WHERE user_id = ?`, [userID]);
     submittedForms.forEach(element => {
         formsArray = formsArray.filter(form => form.id !== element.form_id);
     });
@@ -28,9 +31,9 @@ async function getAvailableForms(req) {
 
 async function getOpenForms(req) {
     let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
-    let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.session.discordId]);
+    let user = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.session.discordId]);
 
-    let userPermission = user[0].permission_level;
+    let userPermission = user[0].perms;
 
     for (let i = 0; i < formsArray.length; i++) {
         if (formsArray[i].permissions_needed > userPermission) {
@@ -48,7 +51,12 @@ async function getOpenForms(req) {
 async function getPreviousSubmissions(req) {
     if (!req.session.discordId) return false;
 
-    let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE discord_id = ?`, [req.session.discordId]);
+    // get user id
+    let user = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.session.discordId]);
+    if (!user) return false;
+    let userID = user[0].id;
+
+    let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE user_id = ?`, [userID]);
 
     // getAvailbleForms and if any have is_hidden set to 1, remove from this array
     let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);

@@ -114,6 +114,7 @@
             // btnToolbar.appendChild(btnAccept);
             // btnToolbar.appendChild(btnDeny);
 
+        if (data.perms > 2) {
             let staffTools = document.getElementById('stafftools');
 
             let staffAlertBox = document.createElement('div');
@@ -228,8 +229,8 @@
             type: 'GET',
             data: { "f9d14b6cb97d": true },
             success: function (data) {
-                // get form_data from subData and parse it into a true json object
-                let formData = JSON.parse(subData.submission.form_data);
+                // get form data from subData and parse it into a true json object
+                let formData = JSON.parse(subData.submission.data);
 
                 // loop through the questions
                 for (var i = 0; i < data.length; i++) {
@@ -242,23 +243,23 @@
                     newLabel.className = 'text-start mb-1 text-secondary';
                     newLabel.innerHTML = data[i].question + ' <span class="text-danger">*</span>';
 
-                    if (data[i].question_type === "textarea") {
+                    if (data[i].type === "textarea") {
                         var newInput = document.createElement('textarea');
                         newInput.className = 'form-control mb-1';
-                        newInput.name = data[i].question_short;
+                        newInput.name = data[i].short_id;
                         newInput.required = true;
-                        newInput.id = data[i].question_short;
+                        newInput.id = data[i].short_id;
                         newInput.disabled = true;
-                        newInput.value = formData[data[i].question_short];
+                        newInput.value = formData[data[i].short_id];
                     } else {
                         var newInput = document.createElement('input');
-                        newInput.type = data[i].question_type;
+                        newInput.type = data[i].type;
                         newInput.className = 'form-control mb-1';
-                        newInput.name = data[i].question_short;
+                        newInput.name = data[i].short_id;
                         newInput.required = true;
-                        newInput.id = data[i].question_short;
+                        newInput.id = data[i].short_id;
                         newInput.disabled = true;
-                        newInput.value = formData[data[i].question_short];
+                        newInput.value = formData[data[i].short_id];
                     }
 
                     // append the label and input to the div

@@ -78,23 +78,23 @@
                     newLabel.className = 'text-start mb-1 text-secondary';
                     newLabel.innerHTML = data[i].question + ' <span class="text-danger">*</span>';
 
-                    if (data[i].question_type === "textarea") {
+                    if (data[i].type === "textarea") {
                         var newInput = document.createElement('textarea');
                         newInput.className = 'form-control mb-1';
-                        newInput.name = data[i].question_short;
+                        newInput.name = data[i].short_id;
                         newInput.required = true;
-                        newInput.id = data[i].question_short;
-                    } else if (data[i].question_type === "select") {
+                        newInput.id = data[i].short_id;
+                    } else if (data[i].type === "select") {
                         var newInput = document.createElement('select');
                         newInput.className = 'form-select mb-1';
-                        newInput.name = data[i].question_short;
+                        newInput.name = data[i].short_id;
                         newInput.required = true;
-                        newInput.id = data[i].question_short;
+                        newInput.id = data[i].short_id;
 
                         let emptyOption = document.createElement('option');
                         newInput.appendChild(emptyOption);
 
-                        var options = data[i].question_data.split('>>');
+                        var options = data[i].data.split('>>');
                         for (var j = 0; j < options.length; j++) {
                             var newOption = document.createElement('option');
                             newOption.value = options[j];
@@ -103,13 +103,13 @@
                         }
                     } else {
                         var newInput = document.createElement('input');
-                        newInput.type = data[i].question_type;
+                        newInput.type = data[i].type;
                         newInput.className = 'form-control mb-1';
-                        newInput.name = data[i].question_short;
+                        newInput.name = data[i].short_id;
                         newInput.required = true;
-                        newInput.id = data[i].question_short;
+                        newInput.id = data[i].short_id;
 
-                        if(data[i].question_short.toLowerCase() === "mcign") {
+                        if(data[i].short_id.toLowerCase() === "mcign") {
                             newInput.disabled = true;
                             newInput.value = "<%- session.mcName %>";
 

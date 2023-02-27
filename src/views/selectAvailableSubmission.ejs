@@ -80,7 +80,7 @@
                         'Content-Type': 'application/json'
                     }
                 }).then(res => res.json()).then(data => {
-                    formName = data.form.form_name;
+                    formName = data.form.name;
                 });
 
                 button.innerHTML = `${formName} (${upFirst(data[i].outcome)})`;
@@ -89,7 +89,7 @@
                 else if (data[i].outcome === 'accepted') button.setAttribute("class", "btn btn-lg btn-success text-white btn-block w-100 mb-3");
                 else if (data[i].outcome === 'denied') button.setAttribute("class", "btn btn-lg btn-danger text-white btn-block w-100 mb-3");
 
-                button.setAttribute("onclick", "window.location.href = '/view/" + data[i].submission_id + "';");
+                button.setAttribute("onclick", "window.location.href = '/view/" + data[i].id + "';");
                 document.getElementById("hereTheFormsGo").appendChild(button);
             }
         }).catch(err => {

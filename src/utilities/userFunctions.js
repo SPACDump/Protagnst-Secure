@@ -2,7 +2,7 @@ const { encrypt } = require("./aes");
 const { executeMysqlQuery } = require("./mysqlHelper");
 
 async function globalCheckHelper(discord_id) {
-    let user = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [discord_id]);
+    let user = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [discord_id]);
 
     if (user.length <= 0) return false;
 
@@ -13,7 +13,7 @@ async function checkUserPermissions(discord_id) {
     let user = await globalCheckHelper(discord_id);
     if (!user) return 0;
 
-    return user.permission_level || 0;
+    return user.perms || 0;
 }
 
 async function getUserMC(discord_id) {
@@ -46,9 +46,8 @@ async function refreshAccessToken(refresh_token, discord_id) {
 
     let json = await data.json();
 
-    console.log(json.refresh_token);
     let newRefreshToken = encrypt(json.refresh_token);
-    await executeMysqlQuery(`UPDATE users SET refresh_token = ? WHERE discord_id = ?`, [newRefreshToken, discord_id]);
+    await executeMysqlQuery(`UPDATE users SET refresh = ? WHERE disc = ?`, [newRefreshToken, discord_id]);
 
     return json.access_token;
 }

@@ -12,10 +12,10 @@
             <p class="text-secondary mb-2">View / Change your profile below<p>
 
             <p class="text-start mb-1 text-secondary">Your Username</p>
-            <input type="text" class="form-control mb-2" placeholder="Discord Tag" value="<%= session.userTag %>" disabled>
+            <input type="text" class="form-control mb-2" placeholder="Discord Tag" value="<%= session.userTag %> (<%= session.discordId %>)" disabled>
 
             <p class="text-start mb-1 text-secondary">Your ID</p>
-            <input type="text" class="form-control mb-2" placeholder="Discord ID" value="<%= session.discordId %>" disabled>
+            <input type="text" class="form-control mb-2" placeholder="Your User ID" value="<%= session.userId %>" disabled>
 
             <p class="text-start mb-1 text-secondary">Your Minecraft Username</p> 
             <% if (session.mcName) { %>

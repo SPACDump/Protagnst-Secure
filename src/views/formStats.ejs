@@ -50,7 +50,7 @@
 
         let data = await formStats.json();
 
-        let nru = data.newest_response_user;
+        let nru = data.discordID;
         if (nru) {
             let discordProfile = await fetch(`/api/getProfileById/${nru}?isFromServer=c2f64dea9444`, {
                 method: "GET",

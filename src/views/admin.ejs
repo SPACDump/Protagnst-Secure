@@ -66,7 +66,7 @@
         let userPerms = await fetch(`/api/fetchUserPerms/<%- session.discordId %>?isFromServer=170c455e9a4a`)
             .then(res => res.json());
 
-        userPermLevel = userPerms.permission_level;
+        userPermLevel = userPerms.perms;
 
         if (userPermLevel >= 5) {
             let banButton = document.createElement("button");

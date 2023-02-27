@@ -83,12 +83,12 @@
                 let currentResponses = await fetch(`/api/currentResponses/${form.id}?isFromServer=fdd04d8ca52b`).then((res) => res.json());
 
                 let button = document.createElement("button");
-                button.innerHTML = data[i].form_name;
+                button.innerHTML = data[i].name;
                 button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
                 button.setAttribute("onclick", "window.location.href = '/fill/" + data[i].id + "';");
                 if (currentResponses >= formMaxResponses && formMaxResponses !== null) {
                     button.setAttribute("disabled", "true");
-                    button.innerHTML = data[i].form_name + " (Closed)";
+                    button.innerHTML = data[i].name + " (Closed)";
                     button.setAttribute("class", "btn btn-lg btn-secondary text-white btn-block w-100 mb-3");
                 }
                 document.getElementById("hereTheFormsGo").appendChild(button);

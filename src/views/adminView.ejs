@@ -88,8 +88,8 @@
 
                             let formButton = document.createElement('button');
                             formButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mb-1';
-                            formButton.innerHTML = `<i class="fa-solid fa-file-alt"></i> ${discordName ?? `Unknown`} - ${formData.form.form_name}`;
-                            formButton.onclick = () => window.location.href = `/view/${data[i].submission_id}`;
+                            formButton.innerHTML = `<i class="fa-solid fa-file-alt"></i> ${discordName ?? `Unknown`} - ${formData.form.name}`;
+                            formButton.onclick = () => window.location.href = `/view/${data[i].id}`;
 
                             document.getElementById('hereTheFormsGo').appendChild(formButton);
                         }
