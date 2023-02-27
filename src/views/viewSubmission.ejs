@@ -43,6 +43,19 @@
     </div>
 
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="primaryToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Processing your request...
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
             aria-atomic="true" id="successToast">
             <div class="d-flex">
@@ -91,29 +104,6 @@
             return data;
         });
 
-        if (data.permission_level > 2) {
-            // let btnToolbar = document.getElementById('btnToolbar');
-            // let staffToolsText = document.getElementById('staffToolsText');
-
-            // staffToolsText.innerHTML = '<b>Staff Tools:</b>';
-
-            // let btnAccept = document.createElement('button');
-            // btnAccept.type = 'button';
-            // btnAccept.id = 'btnAccept';
-            // btnAccept.className = 'btn btn-success btn-md me-1';
-            // btnAccept.innerHTML = '<i class="fa-solid fa-check"></i> Accept';
-            // btnAccept.onclick = () => handleSingleAccept();
-
-            // let btnDeny = document.createElement('button');
-            // btnDeny.type = 'button';
-            // btnDeny.id = 'btnDeny';
-            // btnDeny.className = 'btn btn-danger btn-md me-1';
-            // btnDeny.innerHTML = '<i class="fa-solid fa-times"></i> Deny';
-            // btnDeny.onclick = () => handleSingleDeny();
-
-            // btnToolbar.appendChild(btnAccept);
-            // btnToolbar.appendChild(btnDeny);
-
         if (data.perms > 2) {
             let staffTools = document.getElementById('stafftools');
 
@@ -154,6 +144,8 @@
         document.getElementById('btnAccept').disabled = true;
         document.getElementById('btnDeny').disabled = true;
 
+        showPrimaryToast('primaryToast', 'Processing your request...');
+
         $.ajax({
             url: '/api/admin/accept/' + submissionId,
             type: 'POST',
@@ -191,6 +183,8 @@
 
         document.getElementById('btnAccept').disabled = true;
         document.getElementById('btnDeny').disabled = true;
+
+        showPrimaryToast('primaryToast', 'Processing your request...');
 
         $.ajax({
             url: '/api/admin/deny/' + submissionId,
@@ -284,6 +278,12 @@
         var toastLiveExample = document.getElementById(toastId)
         var toast = new bootstrap.Toast(toastLiveExample)
         toastLiveExample.querySelector('.toast-body').innerText = errormsg;
+        toast.show();
+    }
+
+    function showPrimaryToast(toastId, errormsg) {
+        var toastLiveExample = document.getElementById(toastId)
+        var toast = new bootstrap.Toast(toastLiveExample)
         toast.show();
     }
 
