@@ -341,6 +341,16 @@ class API extends Router {
             return res.json(response);
         });
 
+        this.router.get('/admin/graph/24requests', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let resu = await executeMysqlQuery(`SELECT * FROM requests WHERE time >= UNIX_TIMESTAMP(NOW() - INTERVAL 24 HOUR)`)
+            return res.json(resu);
+        });
+
         this.router.get('/admin/export/:formId', async (req, res) => {
             if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
 
