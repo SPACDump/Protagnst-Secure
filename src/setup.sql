@@ -44,6 +44,16 @@ CREATE TABLE IF NOT EXISTS `questions` (
   KEY `id` (`id`),
   CONSTRAINT `id` FOREIGN KEY (`id`) REFERENCES `forms` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
+-- Dumping structure for table protagnstsecure.requests
+CREATE TABLE IF NOT EXISTS `requests` (
+  `request_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL DEFAULT '0',
+  `page` varchar(255) NOT NULL DEFAULT '0',
+  `time` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`request_id`),
+  KEY `uid` (`user_id`) USING BTREE,
+  CONSTRAINT `userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 

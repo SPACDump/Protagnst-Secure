@@ -69,7 +69,7 @@ class App {
             }
         }
 
-        this.app.use(function (req, res, next) {
+        this.app.use(async function (req, res, next) {
             if (forceHome.includes(req.session.discordId)) {
                 forceHome.splice(forceHome.indexOf(req.session.discordId), 1);
                 return res.redirect('/');
@@ -79,8 +79,10 @@ class App {
                 let allowedPages = ['/ban', '/logout', '/support', '/error', '/403', '/404', '/jswarning'];
                 if (allowedPages.includes(req.path)) return next();
                 else return res.redirect('/ban');
-            }
+            };
 
+            let dontLogTheseEndpoints = ["/favicon.ico"];
+            if (req.session.userId && !dontLogTheseEndpoints.includes(req.path)) await executeMysqlQuery(`INSERT INTO requests (user_id, page, time) VALUES (?, ?, ?)`, [req.session.userId, req.path, Math.floor(Date.now()/1000)]);
             return next();
         });
 
