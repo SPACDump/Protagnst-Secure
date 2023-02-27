@@ -199,10 +199,11 @@ class API extends Router {
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'fdd04d8ca52b') return res.json({ "error": "You are not allowed to use this endpoint" });
 
-            let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ?`, [req.params.formId]);
+            const result = await executeMysqlQuery(`SELECT COUNT(*) as count FROM submissions WHERE form_id = ?`, [req.params.formId]);
+            const count = result[0].count;
 
-            if (submissions.length > 0) {
-                return res.json(submissions.length);
+            if (count > 0) {
+                return res.json(count);
             } else {
                 return res.json({ "error": "No submissions found" });
             }
@@ -296,15 +297,17 @@ class API extends Router {
             if (!formData) return res.json({ "error": "Form not found" });
 
             let formId = req.params.formId;
-            let sql = `SELECT COUNT(*) as current_responses, max_responses FROM forms LEFT JOIN submissions ON forms.id = submissions.form_id WHERE forms.id = ${formId} GROUP BY forms.id;`;
- 
-            let submissions = await executeMysqlQuery(sql);
+
+            let submissions = await executeMysqlQuery(`SELECT IFNULL(COUNT(submissions.id), 0) as current_responses, forms.max_responses FROM forms LEFT JOIN submissions ON forms.id = submissions.form_id WHERE forms.id = ? GROUP BY forms.id;`, [formId]);
             if (submissions.length > 1) return res.json({ "error": "Too many submissions found" });
             else if (submissions.length < 1) return res.json({ "error": "No submissions found" });
 
             let currentResponses = submissions[0].current_responses;
             let maxResponses = submissions[0].max_responses;
-            let latestResponse = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ? ORDER BY submitted_at DESC LIMIT 1`, [formId]);
+            let latestResponse = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ? ORDER BY time DESC LIMIT 1`, [formId]);
+            let userId = latestResponse[0].user_id;
+            let user = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userId]);
+            let discordID = user[0].disc;
 
             let response = {
                 "success": true,
@@ -314,9 +317,10 @@ class API extends Router {
 
             // if last response exists, add it to the response
             if (latestResponse.length > 0) {
-                response.newest_response = latestResponse[0].submitted_at;
-                response.newest_response_user = latestResponse[0].discord_id;
+                response.newest_response = latestResponse[0].time;
+                response.newest_response_user = latestResponse[0].user_id;
                 response.newest_response_outcome = latestResponse[0].outcome;
+                response.discordID = discordID;
             }
 
             return res.json(response);
