@@ -21,4 +21,6 @@ test('Test MySQL query', async () => {
     const result = await executeMysqlQuery('SELECT * FROM test');
     // check the result
     expect(result).toEqual([{ id: 1, name: 'test' }]);
+    // clean up test table
+    await executeMysqlQuery('DROP TABLE IF EXISTS test');
 });
