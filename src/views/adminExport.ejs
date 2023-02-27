@@ -56,7 +56,17 @@
             .then(async data => {
                 if (data.error) {
                     if (data.error === "There are no forms available for you right now!") {
-                        $('#pTagLoading').text('There are no open applications at this time.');
+                        let newElement = document.createElement("div");
+                        newElement.setAttribute("class", "alert alert-danger");
+                        newElement.setAttribute("role", "alert");
+
+                        let newElementP = document.createElement("p");
+                        newElementP.setAttribute("class", "mb-0");
+                        newElementP.innerHTML = "There are no open applications at this time.";
+
+                        newElement.appendChild(newElementP);
+                        document.getElementById("hereTheFormsGo").appendChild(newElement);
+                        $('#pTagLoading').text('');
                     } else {
                         let toastTrigger = document.getElementById('liveToastBtn')
                         let toastLiveExample = document.getElementById('liveToast')
@@ -73,11 +83,21 @@
                     }
                 } else {
                     if (data.length == 0) {
-                        $('#pTagLoading').text('There are no open applications at this time.');
+                        let newElement = document.createElement("div");
+                        newElement.setAttribute("class", "alert alert-danger");
+                        newElement.setAttribute("role", "alert");
+
+                        let newElementP = document.createElement("p");
+                        newElementP.setAttribute("class", "mb-0");
+                        newElementP.innerHTML = "There are no open applications at this time.";
+
+                        newElement.appendChild(newElementP);
+                        document.getElementById("hereTheFormsGo").appendChild(newElement);
+                        $('#pTagLoading').text('');
                     } else {
                         for (let i = 0; i < data.length; i++) {
                             $('#hereTheFormsGo')
-                                .append(`<button class="btn btn-lg btn-primary text-white btn-block w-100" onclick="window.location.href = '${hostname}/admin/export/${data[i].id}';">${data[i].form_name}</button>`);
+                                .append(`<button class="btn btn-lg btn-primary text-white btn-block w-100 mb-2" onclick="window.location.href = '${hostname}/admin/export/${data[i].id}';">${data[i].name}</button>`);
                         }
                         $('#pTagLoading').text('');
                     }
