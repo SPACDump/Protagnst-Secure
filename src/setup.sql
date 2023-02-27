@@ -16,34 +16,37 @@
 
 
 -- Dumping database structure for protagnstsecure
-CREATE DATABASE IF NOT EXISTS `protagnstsecure` /*!40100 DEFAULT CHARACTER SET utf8mb4 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `protagnstsecure` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `protagnstsecure`;
 
 -- Dumping structure for table protagnstsecure.forms
 CREATE TABLE IF NOT EXISTS `forms` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `form_name` varchar(255) NOT NULL,
-  `form_description` varchar(255) NOT NULL,
-  `permissions_needed` int NOT NULL DEFAULT '1',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `perms` int NOT NULL DEFAULT '1',
   `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
   `max_responses` int NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.questions
 CREATE TABLE IF NOT EXISTS `questions` (
-  `question_id` int NOT NULL AUTO_INCREMENT,
-  `id` int NOT NULL,
-  `question` varchar(250) NOT NULL,
-  `question_short` varchar(20) NOT NULL,
-  `question_type` varchar(20) NOT NULL,
-  `question_data` text,
-  PRIMARY KEY (`question_id`) USING BTREE,
-  KEY `id` (`id`),
-  CONSTRAINT `id` FOREIGN KEY (`id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `form_id` int NOT NULL,
+  `question` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `short_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id` (`form_id`) USING BTREE,
+  CONSTRAINT `id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Data exporting was unselected.
+
 -- Dumping structure for table protagnstsecure.requests
 CREATE TABLE IF NOT EXISTS `requests` (
   `request_id` int NOT NULL AUTO_INCREMENT,
@@ -59,28 +62,31 @@ CREATE TABLE IF NOT EXISTS `requests` (
 
 -- Dumping structure for table protagnstsecure.submissions
 CREATE TABLE IF NOT EXISTS `submissions` (
-  `discord_id` varchar(255) NOT NULL,
-  `submission_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `form_id` int NOT NULL,
-  `submitted_at` int NOT NULL,
-  `form_data` text CHARACTER SET utf8mb4 NOT NULL,
+  `user_id` int NOT NULL,
+  `time` int NOT NULL,
+  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `outcome` varchar(10) NOT NULL DEFAULT 'pending',
-  PRIMARY KEY (`submission_id`,`discord_id`) USING BTREE,
+  PRIMARY KEY (`id`) USING BTREE,
   KEY `form_id` (`form_id`),
-  CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `discord_id` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
-  `minecraft_name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `refresh_token` varchar(60) CHARACTER SET utf8mb4 NOT NULL DEFAULT '0',
-  `permission_level` int NOT NULL DEFAULT '1',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `disc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `mc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `refresh` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
+  `perms` int NOT NULL DEFAULT '1',
   `is_banned` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`discord_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
