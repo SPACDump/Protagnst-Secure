@@ -27,7 +27,7 @@ class API extends Router {
         super(client, '/api');
     }
     createRoute() {
-        this.router.use(function (req, res, next) {
+        this.router.use(async function (req, res, next) {
             if (forceHome.includes(req.session.discordId)) {
                 forceHome.splice(forceHome.indexOf(req.session.discordId), 1);
                 return res.redirect('/');
@@ -37,9 +37,17 @@ class API extends Router {
                 let allowedPages = ['/logout']; // they are not allowed to access the API
                 if (allowedPages.includes(req.path)) next();
                 else res.redirect('/ban');
-            } else {
-                next();
-            }
+            };
+
+            let dontLog = false;
+            // if the req path starts with anything from logArray, dont log it
+            let logArray = ["/fetchUserPerms", "/getAvailableForms", "/admin/graph"];
+            for (let i = 0; i < logArray.length; i++) {
+                if (req.path.startsWith(logArray[i])) dontLog = true;
+            };
+
+            if (req.session.userId && !dontLog) await executeMysqlQuery(`INSERT INTO requests (user_id, page, time) VALUES (?, ?, ?)`, [req.session.userId, `/api` + req.path, Math.floor(Date.now()/1000)]);
+            return next();
         });
 
         this.router.get('/', async (req, res) => {
