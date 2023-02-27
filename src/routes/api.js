@@ -97,18 +97,20 @@ class API extends Router {
             let encryptedRefreshToken = encrypt(json.refresh_token);
 
             // check if user exists in database
-            let userExists = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [userJson.id]);
-            // if user exists, delete
+            let userExists = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [userJson.id]);
+            // if user exists, update the record
             if (userExists.length > 0) {
-                let userOldPermission = userExists[0].permission_level;
+                let userOldPermission = userExists[0].perms;
                 let userOldBanStatus = userExists[0].is_banned;
-                let userOldMCName = userExists[0].minecraft_name || null;
+                let userOldMCName = userExists[0].mc || null;
                 req.session.mcName = userOldMCName;
-                await executeMysqlQuery(`DELETE FROM users WHERE discord_id = ?`, [userJson.id]);
-                await executeMysqlQuery(`INSERT INTO users (discord_id, minecraft_name, refresh_token, permission_level, is_banned) VALUES (?, ?, ?, ?, ?)`, [userJson.id, userOldMCName, encryptedRefreshToken, userOldPermission, userOldBanStatus]);
+                req.session.userId = userExists[0].id;
+                await executeMysqlQuery(`UPDATE users SET mc=?, refresh=?, perms=?, is_banned=? WHERE disc = ?`, [userOldMCName, encryptedRefreshToken, userOldPermission, userOldBanStatus, userJson.id]);
             } else {
-                await executeMysqlQuery(`INSERT INTO users (discord_id, refresh_token, permission_level, is_banned) VALUES (?, ?, ?, ?)`, [userJson.id, encryptedRefreshToken, 1, 0]);
-            }
+                await executeMysqlQuery(`INSERT INTO users (disc, refresh, perms, is_banned) VALUES (?, ?, ?, ?)`, [userJson.id, encryptedRefreshToken, 1, 0]);
+                let uid = await executeMysqlQuery(`SELECT id FROM users WHERE disc = ?`, [userJson.id]);
+                req.session.userId = uid[0].id;
+            };
 
             res.set(200).redirect('/');
         });
@@ -143,7 +145,7 @@ class API extends Router {
             let form = await executeMysqlQuery(`SELECT * FROM forms WHERE id = ?`, [req.params.formId]);
 
             if (form.length > 0) {
-                let questions = await executeMysqlQuery(`SELECT * FROM questions WHERE id = ?`, [req.params.formId]);
+                let questions = await executeMysqlQuery(`SELECT * FROM questions WHERE form_id = ?`, [req.params.formId]);
                 let formObj = {
                     "form": form[0],
                     "questions": questions
@@ -161,10 +163,10 @@ class API extends Router {
             // @todo: Add "If user is staff (level 99+), allow it"
             if (isFromServer != 'f1424090948c') return res.json({ "error": "You are not allowed to use this endpoint" });
 
-            let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [req.params.submissionId]);
+            let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [req.params.submissionId]);
 
             let userPerms = await checkUserPermissions(req.session.discordId);
-            if (submission[0].discord_id != req.session.discordId && userPerms < 3) return res.json({ "error": "You are not allowed to view this submission" });
+            if (submission[0].disc != req.session.discordId && userPerms < 3) return res.json({ "error": "You are not allowed to view this submission" });
 
             if (submission.length > 0) {
                 let combinedObj = {
@@ -188,7 +190,7 @@ class API extends Router {
             if (req.session.discordId != req.params.discordId) return res.json({ "error": "You are not allowed to view this user's permissions" });
 
             let perms = await checkUserPermissions(req.session.discordId);
-            return res.json({ "permission_level": perms });
+            return res.json({ "perms": perms });
         });
 
         this.router.get('/currentResponses/:formId', async (req, res) => {
@@ -233,7 +235,7 @@ class API extends Router {
             if (!isFromServer) return res.json({ "error": "You are not allowed to use this endpoint" });
 
             try {
-                let questions = await executeMysqlQuery('SELECT * FROM questions WHERE id = ?', [req.params.formId]);
+                let questions = await executeMysqlQuery('SELECT * FROM questions WHERE form_id = ?', [req.params.formId]);
                 res.json(questions);
             } catch (e) {
                 res.json({ error: true, message: "There was an error with the database query." })
@@ -244,13 +246,19 @@ class API extends Router {
         this.router.post('/submitForm/:formId', async (req, res) => {
             const formId = req.params.formId;
             let data = req.body;
-            let discordId = req.session.discordId;
+            let userId = req.session.userId;
 
-            if (!discordId) {
+            if (!req.session.discordId) {
                 return res.json({
                     "error": "You are not signed in."
                 });
             };
+
+            if (!userId) {
+                return res.json({
+                    "error": "Your account was not found."
+                })
+            }
 
             if (!data) {
                 return res.json({
@@ -258,8 +266,7 @@ class API extends Router {
                 });
             }
 
-            await executeMysqlQuery(`INSERT INTO submissions (discord_id, form_id, submitted_at, form_data, outcome) VALUES (?, ?, ?, ?, ?)`, [discordId, formId, Math.floor(Date.now() / 1000), JSON.stringify(data), 'pending']);
-
+            await executeMysqlQuery(`INSERT INTO submissions (form_id, user_id, time, data, outcome) VALUES (?, ?, ?, ?, ?)`, [formId, userId, Math.floor(Date.now() / 1000), JSON.stringify(data), 'pending']);
             res.json({ success: true, message: 'Successfully applied!' });
         });
 
@@ -341,7 +348,7 @@ class API extends Router {
             if (isFromServer != '37c14b8a8b98') return res.json({ "error": "You are not allowed to use this endpoint" });
 
             let submissions = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ?`, [req.params.formId]);
-            let questions = await executeMysqlQuery(`SELECT * FROM questions WHERE id = ?`, [req.params.formId]);
+            let questions = await executeMysqlQuery(`SELECT * FROM questions WHERE form_id = ?`, [req.params.formId]);
             if (questions.length < 1) return res.json({ "error": "No questions on form" });
 
             let csvRows = [];
@@ -369,22 +376,22 @@ class API extends Router {
             }
 
             for (let i = 0; i < submissionArray.length; i++) {
-                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
-                if (!submission) continue;
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [submissionArray[i]]);
+                if (!submission.user_id) continue;
 
-                let discordId = submission[0].discord_id;
-                let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [discordId]);
-                if (!userData) continue;
+                let userId = submission[0].user_id;
+                let userData = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userId]);
+                if (!userData.id) continue;
 
-                let refreshToken = decrypt(userData[0].refresh_token);
-                let accessToken = await refreshAccessToken(refreshToken, userData[0].discord_id);
+                let refreshToken = decrypt(userData[0].refresh);
+                let accessToken = await refreshAccessToken(refreshToken, userData[0].disc);
 
-                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['accepted', submissionArray[i]]);
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE id = ?`, ['accepted', submissionArray[i]]);
 
                 let roles = [];
                 roles.push(process.env.PARTICIPANT_ROLE_ID);
 
-                await putUserInGuild(accessToken, discordId, process.env.GUILD_ID, roles);
+                await putUserInGuild(accessToken, userData[0].disc, process.env.GUILD_ID, roles);
                 await sleep(1000);
             };
 
@@ -406,10 +413,10 @@ class API extends Router {
             }
 
             for (let i = 0; i < submissionArray.length; i++) {
-                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [submissionArray[i]]);
                 if (!submission) continue;
 
-                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['denied', submissionArray[i]]);
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE id = ?`, ['denied', submissionArray[i]]);
                 await sleep(1200);
             };
 
@@ -431,10 +438,10 @@ class API extends Router {
             }
 
             for (let i = 0; i < submissionArray.length; i++) {
-                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionArray[i]]);
+                let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [submissionArray[i]]);
                 if (!submission) continue;
 
-                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE submission_id = ?`, ['pending', submissionArray[i]]);
+                await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE id = ?`, ['pending', submissionArray[i]]);
                 await sleep(1200);
             };
 
@@ -447,7 +454,7 @@ class API extends Router {
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'reLi3NK5asd6') return res.json({ "error": "You are not allowed to use this endpoint" });
 
-            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.body.userid]);
+            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.body.userid]);
             if (!userData.length) return res.json({ "error": "User not found" });
 
             if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot ban yourself" });
@@ -461,11 +468,11 @@ class API extends Router {
             let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
 
             if (userData[0].is_banned) {
-                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [0, discordData.id]);
+                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE disc = ?`, [0, discordData.id]);
                 return res.json({ success: true, message: `Successfully unbanned ${discordName}` });
             } else {
                 forceHome.push(req.body.userid);
-                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE discord_id = ?`, [1, discordData.id]);
+                await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE disc = ?`, [1, discordData.id]);
                 return res.json({ success: true, message: `Successfully banned ${discordName}` });
             }
         });
@@ -476,7 +483,7 @@ class API extends Router {
             let isFromServer = req.query.isFromServer;
             if (isFromServer != 'dTs54Cskv38ga1') return res.json({ "error": "You are not allowed to use this endpoint" });
 
-            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE discord_id = ?`, [req.body.userid]);
+            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.body.userid]);
             if (!userData.length) return res.json({ "error": "User not found" });
 
             if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot change your own permissions" });
@@ -489,8 +496,8 @@ class API extends Router {
 
             let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
 
-            await executeMysqlQuery(`UPDATE users SET permission_level = ? WHERE discord_id = ?`, [req.body.newPerms, discordData.id]);
-            return res.json({ success: true, message: `Successfully updated ${discordName}'s permission level.\nWas: ${userData[0].permission_level} | Now: ${req.body.newPerms}` });
+            await executeMysqlQuery(`UPDATE users SET perms = ? WHERE disc = ?`, [req.body.newPerms, discordData.id]);
+            return res.json({ success: true, message: `Successfully updated ${discordName}'s permission level.\nWas: ${userData[0].perms} | Now: ${req.body.newPerms}` });
         });
 
         this.router.post('/dev/createNewForm', async (req, res) => {
@@ -505,7 +512,7 @@ class API extends Router {
             let formShown = req.body.formShown;
             let formMaxResponses = req.body.formMaxResponses;
 
-            let nfData = await executeMysqlQuery(`INSERT INTO forms (form_name, form_description, permissions_needed, is_hidden, max_responses) VALUES (?, ?, ?, ?, ?)`, [formName, formDescription, formPerms, formShown, formMaxResponses]);
+            let nfData = await executeMysqlQuery(`INSERT INTO forms (name, \`desc\`, perms, is_hidden, max_responses) VALUES (?, ?, ?, ?, ?)`, [formName, formDescription, formPerms, formShown, formMaxResponses]);
 
             return res.json({ success: true, message: `A new form was successfully created.\nName: ${formName}\nID: ${nfData.insertId}` });
         });
@@ -522,7 +529,7 @@ class API extends Router {
             let questionText = req.body.questionText;
             let questionData = req.body.questionData;
 
-            let nfData = await executeMysqlQuery(`INSERT INTO questions (id, question, question_short, question_type, question_data) VALUES (?, ?, ?, ?, ?)`, [formId, questionText, questionShort, questionType, questionData]);
+            let nfData = await executeMysqlQuery(`INSERT INTO questions (form_id, question, short_id, type, data) VALUES (?, ?, ?, ?, ?)`, [formId, questionText, questionShort, questionType, questionData]);
 
             return res.json({ success: true, message: `A new question was successfully created.\nForm ID: ${formId}\nQuestion ID: ${nfData.insertId}` });
         });
@@ -548,11 +555,11 @@ class API extends Router {
 
             if (formData[0].is_hidden) {
                 await executeMysqlQuery(`UPDATE forms SET is_hidden = ? WHERE id = ?`, [0, req.body.formid]);
-                return res.json({ success: true, message: `Successfully marked ${formData[0].form_name} as shown!` });
+                return res.json({ success: true, message: `Successfully marked ${formData[0].name} as shown!` });
             } else {
                 forceHome.push(req.body.userid);
                 await executeMysqlQuery(`UPDATE forms SET is_hidden = ? WHERE id = ?`, [1, req.body.formid]);
-                return res.json({ success: true, message: `Successfully marked ${formData[0].form_name} as hidden!` });
+                return res.json({ success: true, message: `Successfully marked ${formData[0].name} as hidden!` });
             }
         });
 
@@ -581,7 +588,7 @@ class API extends Router {
             let minecraftName = req.body.mcName;
             if (!minecraftName) return res.json({ "error": "You did not provide a Minecraft name" });
 
-            await executeMysqlQuery(`UPDATE users SET minecraft_name = ? WHERE discord_id = ?`, [minecraftName, req.session.discordId]);
+            await executeMysqlQuery(`UPDATE users SET mc = ? WHERE disc = ?`, [minecraftName, req.session.discordId]);
             req.session.mcName = minecraftName;
             return res.json({ success: true, message: `Your Minecraft name was successfully updated to ${minecraftName}` });
         });

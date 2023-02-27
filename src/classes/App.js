@@ -149,6 +149,7 @@ class App {
 
         this.app.get('/settings', async function (req, res) {
             if (!req.session.discordId) return res.redirect('/auth');
+
             return res.render('userSettings.ejs', { session: req.session });
         });
 
@@ -162,11 +163,11 @@ class App {
             if (!session.discordId) return res.redirect('/auth');
 
             let submissionId = req.params.submissionId;
-            let subData = await executeMysqlQuery(`SELECT * FROM submissions WHERE submission_id = ?`, [submissionId]);
+            let subData = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [submissionId]);
             if (subData.length <= 0) return res.redirect('/404');
 
             let userPerms = await checkUserPermissions(session.discordId);
-            if (subData[0].discord_id != session.discordId && userPerms <= 2) return res.redirect('/403');
+            if (subData[0].disc != session.discordId && userPerms <= 2) return res.redirect('/403');
 
             let formData = await getFormById(subData[0].form_id);
             if (!formData) return res.redirect('/404');
@@ -174,7 +175,7 @@ class App {
             return res.render('viewSubmission.ejs', {
                 session: req.session,
                 submissionId: submissionId,
-                formName: formData.form_name
+                formName: formData.name
             });
         });
 
@@ -239,7 +240,7 @@ class App {
 
             return res.render('fill.ejs', {
                 formId: form.id,
-                formName: form.form_name,
+                formName: form.name,
                 session: req.session
             });
         });
