@@ -80,7 +80,7 @@
         if (userPermLevel >= 50) {
             let submitButton = document.createElement('button');
             submitButton.className = 'btn btn-dark btn-md me-2';
-            submitButton.innerHTML = '<i class="fa-solid fa-terminal"></i> Developer Mode';
+            submitButton.innerHTML = '<i class="fa-solid fa-terminal"></i>';
             submitButton.onclick = () => window.location.href = '/developer';
 
             $("#btnToolbar").append(submitButton);
