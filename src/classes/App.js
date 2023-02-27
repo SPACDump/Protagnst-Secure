@@ -219,6 +219,16 @@ class App {
             });
         });
 
+        this.app.get('/graphs', async function (req, res) {
+            let session = req.session;
+            if (!session.discordId) return res.redirect('/auth');
+
+            let userPerms = await checkUserPermissions(session.discordId);  
+            if (userPerms <= 2) return res.redirect('/403');
+
+            return res.render('graphView.ejs', { session: req.session });
+        });
+
         this.app.get('/fill/:formId', async (req, res) => {
             // check if user has already applied for this form
             let formId = req.params.formId;
