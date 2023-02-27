@@ -1,0 +1,119 @@
+<html lang="en">
+
+<head>
+    <%- include('components/header', { title: 'Admin Graphs' }) %>
+        <link rel="stylesheet" href="../public/css/main.css">
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div id="error">
+        <div class="error err-fix">
+            <h1 class="fancy-header-small">Graphs</h1>
+            <p class="text-secondary mb-5">Some graphs about the system, will be changed in the future.</p>
+
+            <p>24-hour requests</p>
+            <svg width="800" height="400"></svg>
+
+            <div id="btnToolbar" class="btn-toolbar mt-5 mb-1" style="justify-content: center; display: flex;">
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i>
+                    Go Back</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                    onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact
+                    Support</button>
+            </div>
+
+            <p class="mb-1 text-secondary text-center fs-6">
+                &copy; Protagnst Media LLC / Blaze Productions LLC 2022
+            </p>
+        </div>
+    </div>
+
+    <%- include('components/loader') %>
+</body>
+
+<script>
+    // Set up the data
+    const dataUrl = "/api/admin/graph/24requests?isFromServer=37c14b8a8b98";
+    d3.json(dataUrl).then(data => {
+        // Filter the data to only include the last 24 hours
+        const now = Date.now() / 1000; // convert to Unix seconds
+        const yesterday = now - 24 * 60 * 60; // subtract 24 hours in seconds
+        const filteredData = data.filter(d => d.time >= yesterday && d.time <= now);
+
+        // Group the data by hour and count the number of requests per hour
+        const counts = d3.group(filteredData, d => Math.floor(d.time / 3600));
+        const hourlyCounts = Array.from(counts, ([hour, requests]) => ({ hour: hour, count: requests.length }));
+
+        // Set up the SVG and scales
+        const svg = d3.select("svg");
+        const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+        const width = +svg.attr("width") - margin.left - margin.right;
+        const height = +svg.attr("height") - margin.top - margin.bottom;
+        const g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        const x = d3.scaleLinear().rangeRound([0, width]);
+        const y = d3.scaleLinear().rangeRound([height, 0]);
+
+        // Set the domain for the x and y scales
+        x.domain(d3.extent(hourlyCounts, d => d.hour));
+        y.domain([0, d3.max(hourlyCounts, d => d.count)]);
+
+        // Add the x-axis
+        // g.append("g")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(d3.axisBottom(x).ticks(24).tickFormat(d => ""));
+
+        // Add the x-axis and label it with array count
+        g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).ticks(24).tickFormat(d => {
+                const date = new Date(d * 3600 * 1000);
+                return date.toLocaleTimeString("en-US", { hour: "numeric", hour12: true });
+            }));
+
+        // Add the y-axis
+        g.append("g")
+            .call(d3.axisLeft(y));
+
+        // Add the line
+        const line = d3.line()
+            .x(d => x(d.hour))
+            .y(d => y(d.count));
+
+        g.append("path")
+            .datum(hourlyCounts)
+            .attr("fill", "none")
+            .attr("stroke", "orange")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+        // Add the gradient
+        svg.append("linearGradient")
+            .attr("id", "gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", 0).attr("y1", height)
+            .attr("x2", width).attr("y2", height)
+            .selectAll("stop")
+            .data([
+                {offset: "0%", color: "#FFA500"},
+                {offset: "50%", color: "#FFFF00"}
+            ])
+            .enter().append("stop")
+            .attr("offset", d => d.offset)
+            .attr("stop-color", d => d.color);
+
+        // g.append("rect")
+        //     .attr("width", width)
+        //     .attr("height", height)
+        //     .attr("fill", "url(#gradient)");
+
+    }).catch(error => {
+        console.error("Error loading data:", error);
+    });
+</script>
+
+
+</html>
