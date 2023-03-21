@@ -11,6 +11,8 @@ const { encrypt, decrypt } = require('../utilities/aes');
 const { checkUserPermissions, refreshAccessToken, putUserInGuild } = require('../utilities/userFunctions');
 const { forceHome } = require('../..');
 
+require('dotenv').config();
+
 function _encode(obj) {
     let string = "";
 
@@ -474,12 +476,11 @@ class API extends Router {
             if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot ban yourself" });
 
             let discordData;
-            let hostname = req.headers.host;
-            let protocol = req.protocol;
-            let url = protocol + '://' + hostname + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
+            let url = process.env.HOSTNAME + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
             await fetch(url).then(res => res.json()).then((data) => discordData = data);
 
-            let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
+            // discord username and discriminator
+            let discordName = discordData.username + '#' + discordData.discriminator;
 
             if (userData[0].is_banned) {
                 await executeMysqlQuery(`UPDATE users SET is_banned = ? WHERE disc = ?`, [0, discordData.id]);
