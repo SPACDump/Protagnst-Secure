@@ -504,9 +504,7 @@ class API extends Router {
             if (req.body.userid === req.session.discordId) return res.json({ "error": "You cannot change your own permissions" });
 
             let discordData;
-            let hostname = req.headers.host;
-            let protocol = req.protocol;
-            let url = protocol + '://' + hostname + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
+            let url = process.env.HOSTNAME + '/api/getProfileById/' + req.body.userid + '?isFromServer=c2f64dea9444&requestId=' + req.session.discordId;
             await fetch(url).then(res => res.json()).then((data) => discordData = data);
 
             let discordName = discordData.username ?? `Unknown` + '#' + discordData.discriminator ?? `0000`;
