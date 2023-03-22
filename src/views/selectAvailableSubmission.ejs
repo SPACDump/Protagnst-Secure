@@ -88,6 +88,11 @@
                 if (data[i].outcome === 'pending') button.setAttribute("class", "btn btn-lg btn-primary text-white btn-block w-100 mb-3");
                 else if (data[i].outcome === 'accepted') button.setAttribute("class", "btn btn-lg btn-success text-white btn-block w-100 mb-3");
                 else if (data[i].outcome === 'denied') button.setAttribute("class", "btn btn-lg btn-danger text-white btn-block w-100 mb-3");
+                else if (data[i].outcome === 'locked') {
+                    button.setAttribute("class", "btn btn-lg btn-secondary text-white btn-block w-100 mb-3");
+                    button.setAttribute("disabled", "");
+                }
+                else button.setAttribute("class", "btn btn-lg btn-secondary text-white btn-block w-100 mb-3");
 
                 button.setAttribute("onclick", "window.location.href = '/view/" + data[i].id + "';");
                 document.getElementById("hereTheFormsGo").appendChild(button);
