@@ -168,7 +168,7 @@ class API extends Router {
             let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [req.params.submissionId]);
 
             let userPerms = await checkUserPermissions(req.session.discordId);
-            if (submission[0].disc != req.session.discordId && userPerms < 3) return res.json({ "error": "You are not allowed to view this submission" });
+            if (submission[0].user_id != req.session.userId && userPerms < 3) return res.json({ "error": "You are not allowed to view this submission" });
 
             if (submission.length > 0) {
                 let combinedObj = {

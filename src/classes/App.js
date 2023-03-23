@@ -167,7 +167,7 @@ class App {
             if (subData.length <= 0) return res.redirect('/404');
 
             let userPerms = await checkUserPermissions(session.discordId);
-            if (subData[0].disc != session.discordId && userPerms <= 2) return res.redirect('/403');
+            if (subData[0].user_id != session.userId && userPerms <= 2) return res.redirect('/403');
 
             let formData = await getFormById(subData[0].form_id);
             if (!formData) return res.redirect('/404');
