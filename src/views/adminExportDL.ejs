@@ -8,8 +8,8 @@
 <body>
     <div id="error">
         <div class="error err-fix">
-            <h1 class="fancy-header-small">Export Responses</h1>
-            <p class="text-secondary mb-3">Uninstalling bootloader. You're on your own!</p>
+            <h1 class="fancy-header-small" id="bigTitle">Export Responses</h1>
+            <p class="text-secondary mb-3" id="smallSubtitle">Uninstalling bootloader. You're on your own!</p>
 
             <p id="pTagLoading" class="mb-4">Compiling spreadsheet<br /><i>Please wait a few moments...</i>
             </p>
@@ -117,6 +117,12 @@
                 'Content-Type': 'application/json'
             }
         }).then(res => res.json()).then(data => responses = data);
+
+        if (responses?.error) {
+            document.getElementById('pTagLoading').innerHTML = '<b>There are no valid responses to export.</b><br><i>Please try again later.</i>';
+            document.getElementById('smallSubtitle').hidden = true;
+            return document.getElementById('bigTitle').innerHTML = 'Error.'
+        };
 
         let itemsFormatted = [];
         responses.forEach(response => {
