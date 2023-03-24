@@ -105,8 +105,12 @@
                     } else {
                         for (let i = 0; i < data.length; i++) {
                             let formData = await getFormById(data[i].form_id);
-                            let discordProfile = await getProfileById(data[i].discord_id);
-                            let discordName = discordProfile.username + '#' + discordProfile.discriminator;
+                            let userProfile = await getUserById(data[i].user_id);
+                            let discordProfile = await getProfileById(userProfile.disc);
+                            
+                            let discordName;
+                            if (discordProfile?.error || userProfile?.error) discordName = 'Unknown';
+                            else discordName = discordProfile.username + '#' + discordProfile.discriminator;
 
                             let formButton = document.createElement('button');
                             formButton.className = 'btn btn-lg btn-primary text-white btn-block w-100 mb-1';
@@ -127,6 +131,16 @@
         let hostname = url.origin;
 
         let res = await fetch(`${hostname}/api/getFormById/${formId}?&isFromServer=abc54fc6a01a`);
+        let data = await res.json();
+
+        return data;
+    };
+
+    async function getUserById(userId) {
+        let url = new URL(window.location.href);
+        let hostname = url.origin;
+
+        let res = await fetch(`${hostname}/api/admin/getUOByID/${userId}?isFromServer=Fg5fBuPV`);
         let data = await res.json();
 
         return data;
