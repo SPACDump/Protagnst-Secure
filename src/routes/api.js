@@ -393,21 +393,30 @@ class API extends Router {
 
             for (let i = 0; i < submissionArray.length; i++) {
                 let submission = await executeMysqlQuery(`SELECT * FROM submissions WHERE id = ?`, [submissionArray[i]]);
-                if (!submission.user_id) continue;
+                if (!submission.length || !submission) continue;
+                submission = JSON.stringify(submission[0]);
+                let userID = JSON.parse(submission).user_id;
+                if (!userID) continue;
 
-                let userId = submission[0].user_id;
-                let userData = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userId]);
-                if (!userData.id) continue;
+                let userData = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userID]);
+                userData = JSON.stringify(userData[0]);
+                userData = {
+                    disc: JSON.parse(userData).disc,
+                    refresh: JSON.parse(userData).refresh
+                }
+                if (!userData.disc || !userData.refresh) continue;
 
-                let refreshToken = decrypt(userData[0].refresh);
-                let accessToken = await refreshAccessToken(refreshToken, userData[0].disc);
+                console.log(userData.refresh);
+
+                let refreshToken = decrypt(userData.refresh);
+                let accessToken = await refreshAccessToken(refreshToken, userData.disc);
 
                 await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE id = ?`, ['accepted', submissionArray[i]]);
 
                 let roles = [];
                 roles.push(process.env.PARTICIPANT_ROLE_ID);
 
-                await putUserInGuild(accessToken, userData[0].disc, process.env.GUILD_ID, roles);
+                await putUserInGuild(accessToken, userData.disc, process.env.GUILD_ID, roles);
                 await sleep(1000);
             };
 
@@ -590,6 +599,18 @@ class API extends Router {
 
             if (response.status !== 200) return res.json({ "error": "User not found" });
             return res.json(await response.json());
+        });
+
+        this.router.get('/admin/getUOByID/:userId', async (req, res) => {
+            if (!req.session.discordId) return res.json({ "error": "You are not logged in" });
+
+            let isFromServer = req.query.isFromServer;
+            if (isFromServer != 'Fg5fBuPV') return res.json({ "error": "You are not allowed to use this endpoint" });
+
+            let userData = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [req.params.userId]);
+            if (!userData.length) return res.json({ "error": "User not found" });
+
+            return res.json(userData[0]);
         });
 
         this.router.post('/user/setminecraft', async (req, res) => {
