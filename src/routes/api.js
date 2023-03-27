@@ -406,10 +406,9 @@ class API extends Router {
                 }
                 if (!userData.disc || !userData.refresh) continue;
 
-                console.log(userData.refresh);
-
                 let refreshToken = decrypt(userData.refresh);
                 let accessToken = await refreshAccessToken(refreshToken, userData.disc);
+                if (!accessToken) continue;
 
                 await executeMysqlQuery(`UPDATE submissions SET outcome = ? WHERE id = ?`, ['accepted', submissionArray[i]]);
 
