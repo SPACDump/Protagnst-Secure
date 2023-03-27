@@ -82,6 +82,7 @@ class App {
             };
 
             let dontLogTheseEndpoints = ["/favicon.ico"];
+            if (!req.session || !req.session.userId) return next();
             if (req.session.userId && !dontLogTheseEndpoints.includes(req.path)) await executeMysqlQuery(`INSERT INTO requests (user_id, page, time) VALUES (?, ?, ?)`, [req.session.userId, req.path, Math.floor(Date.now()/1000)]);
             return next();
         });

@@ -48,6 +48,7 @@ class API extends Router {
                 if (req.path.startsWith(logArray[i])) dontLog = true;
             };
 
+            if (!req.session || !req.session.userId) return next();
             if (req.session.userId && !dontLog) await executeMysqlQuery(`INSERT INTO requests (user_id, page, time) VALUES (?, ?, ?)`, [req.session.userId, `/api` + req.path, Math.floor(Date.now()/1000)]);
             return next();
         });
