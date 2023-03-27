@@ -44,6 +44,7 @@ async function refreshAccessToken(refresh_token, discord_id) {
     });
 
     let json = await data.json();
+    if (json.error) return false;
 
     let newRefreshToken = encrypt(json.refresh_token);
     await executeMysqlQuery(`UPDATE users SET refresh = ? WHERE disc = ?`, [newRefreshToken, discord_id]);
