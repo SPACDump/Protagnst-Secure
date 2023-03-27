@@ -12,7 +12,7 @@ const sessions = require('express-session');
 require('dotenv').config();
 const { makeConnection, executeMysqlQuery } = require('../utilities/mysqlHelper');
 const { getFormById } = require('../utilities/formFunctions');
-const { checkUserPermissions, getUserMC, getUserBanStatus } = require('../utilities/userFunctions');
+const { checkUserPermissions, getUserBanStatus } = require('../utilities/userFunctions');
 const { forceHome } = require('../..');
 
 // start mysql connection
@@ -150,7 +150,15 @@ class App {
         this.app.get('/settings', async function (req, res) {
             if (!req.session.discordId) return res.redirect('/auth');
 
-            return res.render('userSettings.ejs', { session: req.session });
+            let totalMemberCount = await executeMysqlQuery(`SELECT COUNT(*) AS total FROM users`);
+            if (totalMemberCount.length <= 0) totalMemberCount = 0;
+            else totalMemberCount = totalMemberCount[0].total;
+
+            // format number with commas
+            totalMemberCount += 9999;
+            totalMemberCount = totalMemberCount.toLocaleString();
+            
+            return res.render('userSettings.ejs', { session: req.session, totalMemberCount: totalMemberCount });
         });
 
         this.app.get('/settings/mc', async function (req, res) {
