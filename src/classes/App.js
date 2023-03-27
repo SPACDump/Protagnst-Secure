@@ -155,7 +155,6 @@ class App {
             else totalMemberCount = totalMemberCount[0].total;
 
             // format number with commas
-            totalMemberCount += 9999;
             totalMemberCount = totalMemberCount.toLocaleString();
             
             return res.render('userSettings.ejs', { session: req.session, totalMemberCount: totalMemberCount });
