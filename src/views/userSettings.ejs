@@ -16,6 +16,13 @@
 
             <p class="text-start mb-1 text-secondary">Your ID</p>
             <input type="text" class="form-control mb-2" placeholder="Your User ID" value="<%= session.userId %>" disabled>
+            <p class="text-secondary" style="font-size:xx-small;">
+            <% if (totalMemberCount == 1) { %>
+                Fun fact: There is currently <%= totalMemberCount %> user registered on <b>Protagnst-Secure</b>! <i>And it's you!</i>
+            <% } else { %>
+                Fun fact: There are currently <%= totalMemberCount %> users registered on <b>Protagnst-Secure</b>!</b>
+            <% } %>
+            </p>
 
             <p class="text-start mb-1 text-secondary">Your Minecraft Username</p> 
             <% if (session.mcName) { %>
@@ -32,7 +39,7 @@
             <div id="btnToolbar" class="btn-toolbar mt-2 mb-1" style="justify-content: center; display: flex;">
                 <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
                     onclick="window.location.href = 'javascript:history.back()';"><i class="fa-solid fa-left-long"></i> Go Back</button>
-                <button type="button" id="btnSubmit" class="btn btn-primary btn-md me-2"
+                <button type="button" id="btnSupport" class="btn btn-primary btn-md me-2"
                     onclick="window.location.href = '/support';"><i class="fa-solid fa-phone"></i> Contact Support</button>
             </div>
 
