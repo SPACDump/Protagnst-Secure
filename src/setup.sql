@@ -16,19 +16,19 @@
 
 
 -- Dumping database structure for protagnstsecure
-CREATE DATABASE IF NOT EXISTS `protagnstsecure` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `protagnstsecure` /*!40100 DEFAULT CHARACTER SET utf8mb4 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `protagnstsecure`;
 
 -- Dumping structure for table protagnstsecure.forms
 CREATE TABLE IF NOT EXISTS `forms` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `desc` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `perms` int NOT NULL DEFAULT '1',
   `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
   `max_responses` int NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS `forms` (
 CREATE TABLE IF NOT EXISTS `questions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `form_id` int NOT NULL,
-  `question` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `short_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `question` varchar(250) CHARACTER SET utf8mb4 NOT NULL,
+  `short_id` varchar(20) CHARACTER SET utf8mb4 NOT NULL,
+  `type` varchar(20) CHARACTER SET utf8mb4 NOT NULL,
+  `data` text CHARACTER SET utf8mb4,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `id` (`form_id`) USING BTREE,
   CONSTRAINT `id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `requests` (
   PRIMARY KEY (`request_id`),
   KEY `uid` (`user_id`) USING BTREE,
   CONSTRAINT `userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
@@ -66,27 +66,27 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   `form_id` int NOT NULL,
   `user_id` int NOT NULL,
   `time` int NOT NULL,
-  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `data` text CHARACTER SET utf8mb4 NOT NULL,
   `outcome` varchar(10) NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `form_id` (`form_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `form_id` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table protagnstsecure.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `disc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
-  `mc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `refresh` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
+  `disc` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `mc` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `refresh` varchar(60) CHARACTER SET utf8mb4 NOT NULL DEFAULT '0',
   `perms` int NOT NULL DEFAULT '1',
   `is_banned` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
