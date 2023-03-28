@@ -137,6 +137,9 @@
                 if (typeof data === 'undefined' || data === null || data === '') data = 'N/A';
                 data = data.replace(/,/g, '');
 
+                // fix: When using text area, and having multiple lines, wrap data in double quotes to preserve newlines
+                if (data.includes('\n')) data = `"${data}"`;
+
                 mappedFormData[headers[key]] = data;
             }
 
