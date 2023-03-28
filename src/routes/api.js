@@ -305,12 +305,19 @@ class API extends Router {
             if (submissions.length > 1) return res.json({ "error": "Too many submissions found" });
             else if (submissions.length < 1) return res.json({ "error": "No submissions found" });
 
+            let skipUser = false;
             let currentResponses = submissions[0].current_responses;
             let maxResponses = submissions[0].max_responses;
+
             let latestResponse = await executeMysqlQuery(`SELECT * FROM submissions WHERE form_id = ? ORDER BY time DESC LIMIT 1`, [formId]);
-            let userId = latestResponse[0].user_id;
-            let user = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userId]);
-            let discordID = user[0].disc;
+            let userId = latestResponse[0]?.user_id;
+            if (!userId) skipUser = true;
+
+            let user, discordID;
+            if (!skipUser) {
+                user = await executeMysqlQuery(`SELECT * FROM users WHERE id = ?`, [userId]);
+                discordID = user[0].disc;
+            }
 
             let response = {
                 "success": true,
@@ -319,7 +326,7 @@ class API extends Router {
             }
 
             // if last response exists, add it to the response
-            if (latestResponse.length > 0) {
+            if (latestResponse.length > 0 && user && discordID) {
                 response.newest_response = latestResponse[0].time;
                 response.newest_response_user = latestResponse[0].user_id;
                 response.newest_response_outcome = latestResponse[0].outcome;
