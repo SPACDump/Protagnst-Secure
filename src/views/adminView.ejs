@@ -103,11 +103,27 @@
                         document.getElementById("hereTheFormsGo").appendChild(newElement);
                         $('#pTagLoading').text('');
                     } else {
+                        // if there are 5 or more applications open, cancel the for loop and replace with an alert
                         for (let i = 0; i < data.length; i++) {
+                            if (data.length >= 5) {
+                                let newElement = document.createElement("div");
+                                newElement.setAttribute("class", "alert alert-danger");
+                                newElement.setAttribute("role", "alert");
+
+                                let newElementP = document.createElement("p");
+                                newElementP.setAttribute("class", "mb-0");
+                                newElementP.innerHTML = "There are too many open applications to display. Please use the data export feature.";
+
+                                newElement.appendChild(newElementP);
+                                document.getElementById("hereTheFormsGo").appendChild(newElement);
+                                $('#pTagLoading').text('');
+                                return;
+                            }
+
                             let formData = await getFormById(data[i].form_id);
                             let userProfile = await getUserById(data[i].user_id);
                             let discordProfile = await getProfileById(userProfile.disc);
-                            
+
                             let discordName;
                             if (discordProfile?.error || userProfile?.error) discordName = 'Unknown';
                             else discordName = discordProfile.username + '#' + discordProfile.discriminator;
