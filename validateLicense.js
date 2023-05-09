@@ -33,7 +33,19 @@ let logo = yellow(`
 `);
 
 async function validateLicenseKey() {
+	// Debug node env, skip if this is true (to stop wait times when hotreloading code)
     if (process.env.NODE_ENV === '01a40987-c34a-4868') return true;
+	
+	/**
+	    = ENDPOINT DISABLED =
+		This file isn't in use anymore because the external server
+		That was in use for license verification is no longer live
+		This file still showcases how the program *would* have handled it.
+		
+		An example request from the license api would be
+		{ status_code: 200, data: {}, message: "Welcome back {USER} - License verified!" }
+	**/
+	return true;
 
     console.log(logo);
 
