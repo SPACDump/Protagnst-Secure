@@ -1,5 +1,9 @@
 const { executeMysqlQuery } = require("./mysqlHelper");
 
+// Function to fetch all available forms for a user
+// This function will return an array of forms,
+// but it will also return false if there are no forms available
+// It will automatically filter out forms that the user has already submitted
 async function getAvailableForms(req) {
     if (!req.session.discordId) return false;
 
@@ -29,6 +33,7 @@ async function getAvailableForms(req) {
     return false;
 }
 
+// Same as above but returns all forms with no filtering
 async function getOpenForms(req) {
     let formsArray = await executeMysqlQuery(`SELECT * FROM forms`);
     let user = await executeMysqlQuery(`SELECT * FROM users WHERE disc = ?`, [req.session.discordId]);
@@ -48,6 +53,8 @@ async function getOpenForms(req) {
     return false;
 }
 
+// Function to fetch all previous submissions for a user
+// filters out a submission if its parent form has is_hidden set to 1
 async function getPreviousSubmissions(req) {
     if (!req.session.discordId) return false;
 
@@ -75,9 +82,11 @@ async function getPreviousSubmissions(req) {
     return false;
 }
 
+// Function to fetch a form by its id
 async function getFormById(formId) {
     let form = await executeMysqlQuery(`SELECT * FROM forms WHERE id = ?`, [formId]);
     return form[0];
 }
 
+// Export all functions so they can be used in other files
 module.exports = { getAvailableForms, getFormById, getPreviousSubmissions, getOpenForms };

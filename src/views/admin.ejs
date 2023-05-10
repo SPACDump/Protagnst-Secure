@@ -62,12 +62,14 @@
 
     let userPermLevel = 1;
 
+    // Fetch the user permission level
     $(document).ready(async function () {
         let userPerms = await fetch(`/api/fetchUserPerms/<%- session.discordId %>?isFromServer=170c455e9a4a`)
             .then(res => res.json());
 
         userPermLevel = userPerms.perms;
 
+        // If the user is a high-level staff member (perm level 5+), show the developer button
         if (userPermLevel >= 5) {
             let banButton = document.createElement("button");
             banButton.innerHTML = '<i class="fa-solid fa-gavel"></i> Ban user';
@@ -77,6 +79,7 @@
             $("#lg-buttons").append(banButton);
         }
 
+        // If the user is a developer (perm level 50+), show the developer button
         if (userPermLevel >= 50) {
             let submitButton = document.createElement('button');
             submitButton.className = 'btn btn-dark btn-md me-2';

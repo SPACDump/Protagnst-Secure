@@ -9,6 +9,7 @@ require('dotenv').config();
  */
 let connection;
 
+// Connect to my sql database
 async function makeConnection() {
     connection = mysql.createConnection({
         host: process.env.MYSQL_HOST || 'localhost',
@@ -26,7 +27,9 @@ async function makeConnection() {
     });
 }
 
+// Execute a query on the mysql database
 async function executeMysqlQuery(query, params) {
+    // Promise and only resolve the promise when the query is complete
     return new Promise((resolve, reject) => {
         Logger.mysql(query, params);
         connection.query(query, params, (error, results, fields) => {
@@ -38,6 +41,7 @@ async function executeMysqlQuery(query, params) {
     });
 }
 
+// End the connection to the mysql database (used for testing)
 async function endConnection() {
     return new Promise((resolve, reject) => {
         connection.end((error) => {

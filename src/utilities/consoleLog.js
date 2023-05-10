@@ -11,6 +11,9 @@ let eventLogStream = rfs.createStream('event.log', {
     path: path.join(__dirname, '../..', 'logs/event')
 })
 
+// This is a class to handle logging to the console
+// Each static inside of it is a different type of log (info, error, etc)
+// It each has a different color prefix to make it easier to read
 class Logger {
     static get prefix() {
         return chalk.gray(dateFormat(Date.now(), 'ddd HH:MM:ss:l'))
@@ -25,8 +28,11 @@ class Logger {
     }
 
     static info(...args) {
+        // This line formats the input to make it easier to read
         args = this.formatInput(args)
+        // This line logs the input to the console
         console.log(this.prefix + ' ' + chalk.green('[INFO]') + ' ' + args.join(' '))
+        // This line logs the input to the event log
         eventLogStream.write(this.logPrefix + ' [INFO] ' + args.join(' ') + '\n')
     }
 

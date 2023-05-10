@@ -65,10 +65,10 @@
 
 <script>
     async function handleBanToggle() {
-        // make api request
         const userid = document.getElementById("userid").value;
         $('#btnSubmit').prop('disabled', true);
 
+        // make api request to change the user's ban status to the opposite of what it is
         fetch("/api/admin/toggleBanStatus?isFromServer=reLi3NK5asd6", {
             method: "POST",
             headers: {
@@ -80,6 +80,7 @@
         })
             .then((res) => res.json())
             .then(async (data) => {
+                // if there was an error
                 if (data.error) {
                     $('#btnSubmit').prop('disabled', false);
                     let error = "There was an error processing your request.";
@@ -88,10 +89,13 @@
                     showErrorToast('liveToast', error);
                     return false;
                 } else if (data.success) {
+                    // Else, it was a success
                     await showSuccessToast('successToast', data.message);
                     await sleep(3000);
                     window.location.href = "/admin/ban";
                 } else {
+                    // But wait.. it wasn't a success or an error?
+                    // [visible confusion]
                     showErrorToast('liveToast', "There was an error processing your request.");
                     return false;
                 }
@@ -102,6 +106,7 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // Red toast triggered on a script error
     function showErrorToast(toastId, errormsg) {
         var toastLiveExample = document.getElementById(toastId)
         var toast = new bootstrap.Toast(toastLiveExample)
@@ -109,6 +114,7 @@
         toast.show();
     }
 
+    // Green toast triggered on a successful script execution
     function showSuccessToast(toastId, errormsg) {
         var toastLiveExample = document.getElementById(toastId)
         var toast = new bootstrap.Toast(toastLiveExample)
